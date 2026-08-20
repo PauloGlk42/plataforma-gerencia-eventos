@@ -16,6 +16,7 @@ Lido e validado uma vez, um ingresso tem que ser desativado imediatamente. Além
 - Em caso de cinema/teatro, selecionar o lugar ou a quantidade de ingressos. Interessante ter um tipo de ingresso, como pista, camarote.
 - Pagamento simulado com confirmação e recusa.
 - Área de meus ingressos: dados e QR Code, botão de compartilhar.
+- Poder cancelar o ingresso.
 
 ### Requisitos Funcionais Frontend (Gerência):
 - Criação e gerenciamento dos eventos pelo organizador, isto é, trazer para uma tela de Eventos, por exemplo, os eventos criados pelo mesmo.
@@ -31,6 +32,7 @@ Lido e validado uma vez, um ingresso tem que ser desativado imediatamente. Além
 - Dificultar ao máximo a forja de um QR Code.
 - Compartilhamento do QR Code via link. Então, provavelmente, seria uma página aberta, sem validação.
 - Validou o ingresso na portaria, finaliza ele para evitar fraudes na entrada.
+- devolução ao estoque em caso de cancelamento.
 
 Se basear em plataformas reais (tem no PDF), pegar o melhor de cada uma, evitando um frontend padrão demais.
 
@@ -67,3 +69,21 @@ A princípio, daria para começar com a ideia de que existe uma tela inicial que
 - Inicializar o back com banco e front.
 - Qual modelo de organização seguir?
 - Definir conceitualmente qual o núcleo do software, que deve estar funcionando 100% antes de implementar os requisitos e incrementar com ideias, por exemplo.
+
+### Resumo do dia 19/08: 
+- Pensando em coisas como deploy, que queria muito fazer, acabei optando por usar Next.js devido à compatibilidade com a Vercel. Para o backend, que decidi fazer em Java seguindo o modelo organizacional de camadas, e banco PostgreSQL, seria interessante enviar ao Railway por questões de  compatibilidade.
+
+Acabei fazendo na mão as inicializações e configurações iniciais do backend. Comecei pela autenticação por questão das roles, vendo tutoriais, documentação ou consultando IAs para ver as políticas de segurança aplicáveis no projeto. Com JWT e gerenciamento stateless e algumas classes, dei início a essa parte do projeto. Frontend e partes teóricas não deram tempo de fazer hoje.
+
+### Objetivo do dia 20/08:
+- Esquemático do software para melhor compreensão dos fluxos.
+- Diagrama de classes do banco.
+- Inicializar o frontend.
+- Definir conceitualmente qual o núcleo do software, que deve estar funcionando 100% antes de implementar os requisitos e incrementar com ideias, por exemplo.
+- Implementar algumas das principais funcionalidades do backend.
+
+### Questões pendentes:
+- Uso do Docker
+- Migrations (Flyway) para facilitar
+- Swagger e testes  
+- Refresh token?
