@@ -71,7 +71,7 @@ A princípio, daria para começar com a ideia de que existe uma tela inicial que
 - Definir conceitualmente qual o núcleo do software, que deve estar funcionando 100% antes de implementar os requisitos e incrementar com ideias, por exemplo.
 
 ### Resumo do dia 19/08: 
-- Pensando em coisas como deploy, que queria muito fazer, acabei optando por usar Next.js devido à compatibilidade com a Vercel. Para o backend, que decidi fazer em Java seguindo o modelo organizacional de camadas, e banco PostgreSQL, seria interessante enviar ao Railway por questões de  compatibilidade.
+- Pensando em coisas como deploy, que queria muito fazer, acabei optando por react + vite devido à compatibilidade com a Vercel. Para o backend, que decidi fazer em Java seguindo o modelo organizacional de camadas, e para banco PostgreSQL. Seria interessante enviar ao Railway por questões de  compatibilidade.
 
 Acabei fazendo na mão as inicializações e configurações iniciais do backend. Comecei pela autenticação por questão das roles, vendo tutoriais, documentação ou consultando IAs para ver as políticas de segurança aplicáveis no projeto. Com JWT e gerenciamento stateless e algumas classes, dei início a essa parte do projeto. Frontend e partes teóricas não deram tempo de fazer hoje.
 
@@ -87,3 +87,4 @@ Acabei fazendo na mão as inicializações e configurações iniciais do backend
 - Migrations (Flyway) para facilitar
 - Swagger e testes  
 - Refresh token?
+- Cors
