@@ -31,6 +31,11 @@ public class SecurityConfigurations {
                                             .requestMatchers(HttpMethod.POST, "/auth/register").permitAll() //tirar depois de decidir como vai funcionar a parte de roles
                                             .requestMatchers("/error")
                                             .permitAll()
+                                            .requestMatchers(HttpMethod.GET, "/api/eventos/meus").hasRole("ORGANIZADOR")
+                                            .requestMatchers(HttpMethod.GET, "/api/catalogo").hasRole("ORGANIZADOR")
+                                            .requestMatchers(HttpMethod.POST, "/api/eventos/*/publicar").hasRole("ORGANIZADOR")
+                                            .requestMatchers(HttpMethod.POST, "/api/eventos").hasRole("ORGANIZADOR")
+                                            .requestMatchers(HttpMethod.GET, "/api/eventos/**").permitAll()
                                             .anyRequest()
                                             .authenticated())
                                     .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
