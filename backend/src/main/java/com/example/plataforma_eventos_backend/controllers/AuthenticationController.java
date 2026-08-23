@@ -1,6 +1,7 @@
 package com.example.plataforma_eventos_backend.controllers;
 
 import com.example.plataforma_eventos_backend.domain.user.User;
+import com.example.plataforma_eventos_backend.domain.user.UserRoles;
 import com.example.plataforma_eventos_backend.domain.user.dtos.AuthenticationDTO;
 import com.example.plataforma_eventos_backend.domain.user.dtos.LoginResponseDTO;
 import com.example.plataforma_eventos_backend.domain.user.dtos.RegisterDTO;
@@ -42,6 +43,9 @@ public class AuthenticationController {
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.name(), data.login(), encryptedPassword);
+        // só o cliente se autorregistra por aqui; organizador e portaria são provisionados
+        // de outra forma (fora do escopo atual), então o cadastro público é sempre CLIENTE
+        newUser.setRole(UserRoles.CLIENTE);
 
         this.userRepository.save(newUser);
 
