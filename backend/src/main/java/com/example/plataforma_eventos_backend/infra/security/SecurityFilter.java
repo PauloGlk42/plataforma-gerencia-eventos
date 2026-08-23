@@ -27,10 +27,16 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
         if(token != null){
             var login = tokenService.validateToken(token);
-            UserDetails user = userRepository.findByLogin(login);
-
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // token inválido/expirado devolve login vazio, e um usuário apagado depois de
+            // emitido o token não existe mais: nos dois casos segue sem autenticar em vez de
+            // estourar NPE, senão rota pública nenhuma sobrevive a um token velho no header
+            if(login != null && !login.isBlank()){
+                UserDetails user = userRepository.findByLogin(login);
+                if(user != null){
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
         }
         filterChain.doFilter(request, response);
 
