@@ -1,0 +1,13 @@
+.stub {
+  padding: 60px 0; text-align: center; display: flex; flex-direction: column;
+  align-items: center; gap: 10px;
+}
+.stub-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0;
+}
+.stub h1 {
+  font-family: var(--font-display); font-size: 28px; font-weight: 500;
+  margin: 0 0 6px; letter-spacing: -.01em;
+}
+.stub p { color: var(--ink-2); margin: 0 0 10px; }

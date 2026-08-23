@@ -1,0 +1,61 @@
+/* Card copiado de docs/prototipo-home.html (.card, .poster, .kind, .card-body,
+   .meta, .price, .occ*). .poster-img é novo: cobre o bloco quando
+   evento.imagemUrl existe e carrega; sem imagem (ou onError) cai no bloco
+   tipográfico de cor do protótipo. */
+
+.card {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  display: flex; flex-direction: column; overflow: hidden;
+  transition: box-shadow .16s ease, transform .16s ease, border-color .16s ease;
+}
+.card:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: var(--rule-2); }
+
+.poster {
+  aspect-ratio: 4 / 3; position: relative; display: flex; align-items: flex-end;
+  padding: 15px; border-bottom: 1px solid var(--rule);
+  background:
+    repeating-linear-gradient(135deg, rgb(var(--p) / .07) 0 1px, transparent 1px 8px),
+    linear-gradient(155deg, rgb(var(--p) / var(--tint-a)), rgb(var(--p) / var(--tint-b)));
+}
+.poster h3 {
+  font-family: var(--font-display); font-weight: 500; font-size: 24px;
+  line-height: 1.1; margin: 0; color: var(--ink); text-wrap: balance;
+}
+.poster-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.kind {
+  position: absolute; top: 11px; left: 11px; z-index: 2;
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .12em;
+  background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--rule-2); padding: 2px 7px; border-radius: var(--radius);
+}
+
+.card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 11px; flex: 1; }
+.meta { font-size: 13.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 2px; }
+.meta .when {
+  font-family: var(--font-mono); font-size: 12.5px;
+  color: var(--ink); font-variant-numeric: tabular-nums;
+}
+.price {
+  margin-top: auto; display: flex; align-items: baseline; justify-content: space-between;
+  gap: 10px; border-top: 1px solid var(--rule); padding-top: 11px;
+}
+.price .from { font-size: 11px; color: var(--ink-3); }
+.price strong {
+  font-family: var(--font-mono); font-size: 15px; font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.occ { display: flex; flex-direction: column; gap: 5px; }
+.occ-track { height: 5px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.occ-fill { height: 100%; border-radius: 999px; }
+.occ-label {
+  display: flex; justify-content: space-between; gap: 8px;
+  font-size: 11.5px; color: var(--ink-2); font-variant-numeric: tabular-nums;
+}
+.occ-label .pct { font-family: var(--font-mono); color: var(--ink-3); }
+.sold-out {
+  font-size: 11.5px; font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--ink-3);
+}

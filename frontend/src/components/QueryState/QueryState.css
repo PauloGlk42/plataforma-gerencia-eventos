@@ -1,0 +1,23 @@
+.query-state {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 40px 24px; text-align: center; color: var(--ink-2); font-size: 14.5px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.query-state-title { margin: 0; color: var(--ink); font-weight: 600; font-size: 15px; }
+.query-state-desc { margin: 0; max-width: 46ch; }
+.query-state button {
+  font: inherit; font-size: 13.5px; cursor: pointer; margin-top: 4px;
+  border: 1px solid var(--rule-2); background: var(--paper); color: var(--ink);
+  padding: 8px 16px; border-radius: var(--radius);
+}
+.query-state-error .query-state-title { color: var(--ink); }
+
+.query-state-spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--rule-2); border-top-color: var(--accent);
+  animation: query-state-spin .7s linear infinite;
+}
+@keyframes query-state-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .query-state-spinner { animation: none; }
+}

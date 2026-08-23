@@ -1,0 +1,26 @@
+/* Primitivas reaproveitadas em mais de uma tela — copiadas de
+   docs/prototipo-home.html (.field vem do painel de filtros, .cta vem do
+   checkout do protótipo e virou o botão primário genérico). */
+
+.field {
+  display: flex; flex-direction: column; gap: 1px;
+  border: 1px solid var(--rule-2); background: var(--paper);
+  border-radius: var(--radius); padding: 6px 11px;
+}
+.field label {
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 600;
+}
+.field input, .field select {
+  font: inherit; font-size: 14px; border: 0; background: transparent;
+  color: var(--ink); min-width: 0; padding: 0; width: 100%;
+}
+.field input:focus, .field select:focus { outline: none; }
+.field:focus-within { border-color: var(--accent); }
+
+.cta {
+  font: inherit; font-size: 15px; font-weight: 600; width: 100%;
+  background: var(--accent); color: #fff; border: 0; border-radius: var(--radius);
+  padding: 13px; cursor: pointer;
+}
+.cta:disabled { background: var(--surface-2); color: var(--ink-3); cursor: not-allowed; }

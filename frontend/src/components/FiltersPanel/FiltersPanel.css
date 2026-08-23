@@ -1,0 +1,32 @@
+/* Painel de filtros copiado de docs/prototipo-home.html (.panel, .field, .seg).
+   Cidade virou <input> em vez de <select> — a API não expõe lista de cidades
+   distintas — e ganhou preço min./máx., que o mockup visual não tinha mas o
+   backend filtra (GET /api/eventos?precoMin=&precoMax=). */
+
+.panel {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 16px; margin-bottom: 26px;
+}
+.panel-top {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; margin-bottom: 12px;
+}
+.panel-top h2 {
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 600; margin: 0;
+}
+.panel-top button {
+  font: inherit; font-size: 13px; background: none; border: 0;
+  color: var(--accent); cursor: pointer; padding: 0;
+}
+.panel-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; }
+
+/* .field é compartilhado — ver src/styles/shared.css */
+.field.grow { flex: 1 1 240px; }
+
+.seg { display: flex; border: 1px solid var(--rule-2); border-radius: var(--radius); overflow: hidden; }
+.seg button {
+  font: inherit; font-size: 13px; border: 0; background: var(--paper);
+  color: var(--ink-2); padding: 0 15px; cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
