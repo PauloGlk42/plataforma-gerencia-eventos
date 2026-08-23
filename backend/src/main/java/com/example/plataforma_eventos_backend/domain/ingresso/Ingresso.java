@@ -30,7 +30,7 @@ public class Ingresso {
     @JoinColumn(name = "setor_id", nullable = false)
     private Setor setor;
 
-    @Column(nullable = false, unique = true, length = 60)
+    @Column(nullable = false, unique = true, length = 120)
     private String codigo;
 
     @Enumerated(EnumType.STRING)
