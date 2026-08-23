@@ -1,6 +1,10 @@
 import { getToken, clearAuth } from './authStorage'
 import { redirectToLogin } from './navigation'
 
+// vazia em dev: caminho relativo cai no proxy do Vite (vite.config.js), mesma
+// origem pro navegador. Em produção aponta pro backend publicado (Railway).
+const API_BASE = import.meta.env.VITE_API_URL ?? ''
+
 // Erro no mesmo formato do RestControllerAdvice do backend: status, mensagem e,
 // quando é validação de campo, o nome do campo.
 export class ApiError extends Error {
@@ -22,7 +26,7 @@ async function request(path, { method = 'GET', body, auth = true, headers = {} }
 
   let response
   try {
-    response = await fetch(path, {
+    response = await fetch(`${API_BASE}${path}`, {
       method,
       headers: finalHeaders,
       body: body !== undefined ? JSON.stringify(body) : undefined,
