@@ -1,0 +1,101 @@
+/*
+  Tokens de design extraídos de docs/prototipo-home.html — cor, tipografia,
+  raio e sombra são cópia literal do protótipo (a decisão de identidade
+  visual já foi tomada ali). Espaçamento continua explícito por componente,
+  como no próprio protótipo, que não tokeniza espaçamento.
+*/
+
+:root {
+  --paper:      #FBFCFE;
+  --surface:    #FFFFFF;
+  --surface-2:  #F1F4F9;
+  --ink:        #242B3A;
+  --ink-2:      #59637A;
+  --ink-3:      #8B94A8;
+  --rule:       #E2E7F0;
+  --rule-2:     #CBD3E1;
+  --accent:     #3A5CE0;
+  --accent-soft:#EEF2FE;
+  --stage:      #CDD5E4;
+  /* Rampa sequencial de ocupação: um matiz só, claro -> escuro */
+  --occ-1:      #E3E9FD;
+  --occ-2:      #B7C5F6;
+  --occ-3:      #8398EC;
+  --occ-4:      #4E67D6;
+  --occ-out:    #DCE1E9;
+  --shadow:     0 1px 2px rgba(36,43,58,.04), 0 10px 26px -14px rgba(36,43,58,.16);
+  --tint-a:     .16;
+  --tint-b:     .34;
+
+  --radius: 2px;
+  --font-display: "Bodoni Moda", Georgia, serif;
+  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:      #0E1117;
+    --surface:    #171B24;
+    --surface-2:  #1F2531;
+    --ink:        #EAEEF6;
+    --ink-2:      #A8B2C6;
+    --ink-3:      #79839A;
+    --rule:       #2A3140;
+    --rule-2:     #3A4354;
+    --accent:     #8CA0FF;
+    --accent-soft:#1C2340;
+    --stage:      #333B4B;
+    --occ-1:      #2C3660;
+    --occ-2:      #45579F;
+    --occ-3:      #7186DE;
+    --occ-4:      #A6B6FF;
+    --occ-out:    #333A48;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 10px 26px -14px rgba(0,0,0,.6);
+    --tint-a:     .22;
+    --tint-b:     .40;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper:      #0E1117;
+  --surface:    #171B24;
+  --surface-2:  #1F2531;
+  --ink:        #EAEEF6;
+  --ink-2:      #A8B2C6;
+  --ink-3:      #79839A;
+  --rule:       #2A3140;
+  --rule-2:     #3A4354;
+  --accent:     #8CA0FF;
+  --accent-soft:#1C2340;
+  --stage:      #333B4B;
+  --occ-1:      #2C3660;
+  --occ-2:      #45579F;
+  --occ-3:      #7186DE;
+  --occ-4:      #A6B6FF;
+  --occ-out:    #333A48;
+  --shadow:     0 1px 2px rgba(0,0,0,.4), 0 10px 26px -14px rgba(0,0,0,.6);
+  --tint-a:     .22;
+  --tint-b:     .40;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-shell a:focus-visible, .app-shell button:focus-visible, .app-shell input:focus-visible,
+.app-shell select:focus-visible, .app-shell [tabindex]:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+
+.app-shell .wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell * { transition: none !important; }
+}
