@@ -16,6 +16,8 @@ public record EventoResumoDTO(
         String uf,
         OffsetDateTime inicio,
         StatusEvento status,
-        BigDecimal precoMinimo
+        BigDecimal precoMinimo,
+        Integer capacidade,
+        Integer ocupados
 ) {
 }

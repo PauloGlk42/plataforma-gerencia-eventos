@@ -1,6 +1,7 @@
 package com.example.plataforma_eventos_backend.repositories;
 
 import com.example.plataforma_eventos_backend.domain.evento.Evento;
+import com.example.plataforma_eventos_backend.domain.evento.OcupacaoPorEvento;
 import com.example.plataforma_eventos_backend.domain.evento.PrecoMinimoPorEvento;
 import com.example.plataforma_eventos_backend.domain.evento.Setor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,10 @@ public interface SetorRepository extends JpaRepository<Setor, Long> {
             FROM Setor s WHERE s.evento IN :eventos GROUP BY s.evento.id
             """)
     List<PrecoMinimoPorEvento> buscarPrecoMinimoPorEvento(@Param("eventos") List<Evento> eventos);
+
+    @Query("""
+            SELECT s.evento.id AS eventoId, SUM(s.capacidade) AS capacidadeTotal, SUM(s.ocupados) AS ocupadosTotal
+            FROM Setor s WHERE s.evento IN :eventos GROUP BY s.evento.id
+            """)
+    List<OcupacaoPorEvento> buscarOcupacaoPorEvento(@Param("eventos") List<Evento> eventos);
 }

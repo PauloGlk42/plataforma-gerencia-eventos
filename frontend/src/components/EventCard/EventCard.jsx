@@ -33,8 +33,6 @@ function MedidorOcupacao({ capacidade, ocupados }) {
 export default function EventCard({ evento }) {
   const [imagemFalhou, setImagemFalhou] = useState(false)
   const temImagem = !!evento.imagemUrl && !imagemFalhou
-  // capacidade/ocupados não vêm da listagem pública hoje (ver README) — o
-  // medidor só aparece se um dia esses campos passarem a existir aqui.
   const temOcupacao = evento.capacidade != null && evento.ocupados != null
 
   return (

@@ -2,6 +2,7 @@ package com.example.plataforma_eventos_backend.services;
 
 import com.example.plataforma_eventos_backend.domain.evento.Evento;
 import com.example.plataforma_eventos_backend.domain.evento.EventoPublicoSpecification;
+import com.example.plataforma_eventos_backend.domain.evento.OcupacaoPorEvento;
 import com.example.plataforma_eventos_backend.domain.evento.PrecoMinimoPorEvento;
 import com.example.plataforma_eventos_backend.domain.evento.Setor;
 import com.example.plataforma_eventos_backend.domain.evento.StatusEvento;
@@ -113,7 +114,8 @@ public class EventoService {
                 de, ate, precoMin, precoMax);
         Page<Evento> pagina = eventoRepository.findAll(especificacao, pageable);
         Map<Long, BigDecimal> precosMinimos = precoMinimoPorEvento(pagina.getContent());
-        return pagina.map(evento -> paraResumo(evento, precosMinimos.get(evento.getId())));
+        Map<Long, OcupacaoPorEvento> ocupacoes = ocupacaoPorEvento(pagina.getContent());
+        return pagina.map(evento -> paraResumo(evento, precosMinimos.get(evento.getId()), ocupacoes.get(evento.getId())));
     }
 
     public EventoDetalheDTO buscarDetalhePublico(Long eventoId, User usuarioAtual) {
@@ -141,7 +143,10 @@ public class EventoService {
 
     private List<EventoResumoDTO> paraResumos(List<Evento> eventos) {
         Map<Long, BigDecimal> precosMinimos = precoMinimoPorEvento(eventos);
-        return eventos.stream().map(evento -> paraResumo(evento, precosMinimos.get(evento.getId()))).toList();
+        Map<Long, OcupacaoPorEvento> ocupacoes = ocupacaoPorEvento(eventos);
+        return eventos.stream()
+                .map(evento -> paraResumo(evento, precosMinimos.get(evento.getId()), ocupacoes.get(evento.getId())))
+                .toList();
     }
 
     private Map<Long, BigDecimal> precoMinimoPorEvento(List<Evento> eventos) {
@@ -152,10 +157,20 @@ public class EventoService {
                 .collect(Collectors.toMap(PrecoMinimoPorEvento::getEventoId, PrecoMinimoPorEvento::getPrecoMinimo));
     }
 
-    private EventoResumoDTO paraResumo(Evento evento, BigDecimal precoMinimo) {
+    private Map<Long, OcupacaoPorEvento> ocupacaoPorEvento(List<Evento> eventos) {
+        if (eventos.isEmpty()) {
+            return Map.of();
+        }
+        return setorRepository.buscarOcupacaoPorEvento(eventos).stream()
+                .collect(Collectors.toMap(OcupacaoPorEvento::getEventoId, ocupacao -> ocupacao));
+    }
+
+    private EventoResumoDTO paraResumo(Evento evento, BigDecimal precoMinimo, OcupacaoPorEvento ocupacao) {
+        Integer capacidade = ocupacao != null ? ocupacao.getCapacidadeTotal().intValue() : null;
+        Integer ocupados = ocupacao != null ? ocupacao.getOcupadosTotal().intValue() : null;
         return new EventoResumoDTO(evento.getId(), evento.getTipo(), evento.getTitulo(), evento.getImagemUrl(),
                 evento.getLocalNome(), evento.getCidade(), evento.getUf(), evento.getInicio(), evento.getStatus(),
-                precoMinimo);
+                precoMinimo, capacidade, ocupados);
     }
 
     private static String vazioParaNull(String valor) {
