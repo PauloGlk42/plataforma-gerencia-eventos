@@ -1,0 +1,46 @@
+/* Masthead copiada de docs/prototipo-home.html. Os elementos viraram <a>
+   (React Router <Link>) em vez de <button>; herdam sublinhado/cor do link
+   por padrão, então cada classe reseta isso explicitamente. */
+
+.masthead { border-bottom: 1px solid var(--rule); background: var(--surface); }
+.masthead .wrap {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap;
+}
+
+.logo {
+  font-family: var(--font-display); font-size: 29px; font-weight: 700;
+  letter-spacing: -.015em; line-height: 1; color: var(--ink);
+  text-decoration: none; cursor: pointer;
+}
+.logo em { font-style: italic; font-weight: 400; color: var(--accent); }
+
+nav.top { display: flex; gap: 10px; align-items: center; }
+
+.navlink {
+  font: inherit; font-size: 14px; color: var(--ink-2); text-decoration: none;
+  cursor: pointer; padding: 8px 10px; border-radius: var(--radius);
+}
+.navlink:hover { color: var(--ink); background: var(--surface-2); }
+
+.btn-search {
+  font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+  border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent);
+  padding: 8px 15px; border-radius: var(--radius);
+}
+.btn-search svg { width: 15px; height: 15px; }
+
+.btn-conta {
+  font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 9px;
+  border: 1px solid var(--rule-2); background: var(--surface); color: var(--ink);
+  padding: 7px 14px 7px 8px; border-radius: var(--radius);
+}
+.btn-conta.deslogado { padding: 8px 16px; }
+
+.avatar {
+  width: 24px; height: 24px; border-radius: 50%; background: var(--accent);
+  color: #fff; font-size: 11px; font-weight: 600;
+  display: grid; place-items: center; letter-spacing: .02em;
+}
