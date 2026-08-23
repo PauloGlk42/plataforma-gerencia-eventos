@@ -133,6 +133,16 @@ public class BookingService {
                 .toList();
     }
 
+    /**
+     * Ponto de entrada usado pelo PagamentoService: aplica a mesma checagem de dono e a
+     * mesma expiração preguiçosa do buscar(), mas devolve a entidade em vez do DTO, porque
+     * quem chama precisa continuar a transação (registrar pagamento, emitir ingresso).
+     */
+    @Transactional
+    public Pedido obterEntidadeAtualizada(Long pedidoId, User cliente) {
+        return expirarSeVencido(buscarDoCliente(pedidoId, cliente));
+    }
+
     @Transactional
     public void cancelar(Long pedidoId, User cliente) {
         Pedido pedido = buscarDoCliente(pedidoId, cliente);

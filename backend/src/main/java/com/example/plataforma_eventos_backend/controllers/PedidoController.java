@@ -1,9 +1,12 @@
 package com.example.plataforma_eventos_backend.controllers;
 
+import com.example.plataforma_eventos_backend.domain.pagamento.dtos.DadosCartaoDTO;
+import com.example.plataforma_eventos_backend.domain.pagamento.dtos.PagamentoRespostaDTO;
 import com.example.plataforma_eventos_backend.domain.pedido.dtos.CriarPedidoDTO;
 import com.example.plataforma_eventos_backend.domain.pedido.dtos.PedidoDetalheDTO;
 import com.example.plataforma_eventos_backend.domain.user.User;
 import com.example.plataforma_eventos_backend.services.BookingService;
+import com.example.plataforma_eventos_backend.services.PagamentoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +26,11 @@ import java.util.List;
 public class PedidoController {
 
     private final BookingService bookingService;
+    private final PagamentoService pagamentoService;
 
-    public PedidoController(BookingService bookingService) {
+    public PedidoController(BookingService bookingService, PagamentoService pagamentoService) {
         this.bookingService = bookingService;
+        this.pagamentoService = pagamentoService;
     }
 
     @PostMapping("/pedidos")
@@ -49,5 +54,11 @@ public class PedidoController {
     public ResponseEntity<Void> cancelar(@PathVariable Long id, @AuthenticationPrincipal User cliente) {
         bookingService.cancelar(id, cliente);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/pedidos/{id}/pagamento")
+    public ResponseEntity<PagamentoRespostaDTO> pagar(@PathVariable Long id, @RequestBody @Valid DadosCartaoDTO dados,
+                                                        @AuthenticationPrincipal User cliente) {
+        return ResponseEntity.ok(pagamentoService.pagar(id, dados, cliente));
     }
 }

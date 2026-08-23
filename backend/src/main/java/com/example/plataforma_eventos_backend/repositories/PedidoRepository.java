@@ -31,4 +31,14 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     @Query("SELECT p.id FROM Pedido p WHERE p.status = :status AND p.expiraEm < :agora")
     List<Long> buscarIdsPendentesVencidos(@Param("status") StatusPedido status, @Param("agora") OffsetDateTime agora);
+
+    /**
+     * Mesma transição condicional de atualizarStatusSe, mas também zera expira_em — pedido
+     * pago não expira mais. 0 linhas afetadas: outra requisição já pagou este pedido antes.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE Pedido p SET p.status = :novoStatus, p.expiraEm = null, p.atualizadoEm = CURRENT_TIMESTAMP " +
+            "WHERE p.id = :id AND p.status = :statusAtual")
+    int aprovarPagamento(@Param("id") Long id, @Param("statusAtual") StatusPedido statusAtual,
+                          @Param("novoStatus") StatusPedido novoStatus);
 }
