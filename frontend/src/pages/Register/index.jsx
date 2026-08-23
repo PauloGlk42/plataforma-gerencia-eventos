@@ -1,17 +1,18 @@
 import { useState, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Style.css'
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai'
 import { FiLock } from 'react-icons/fi'
 import { useRegister } from '../../hooks/useRegister'
 
 function Home() {
+  const navigate = useNavigate()
   const { mutate: registerUser, isPending, isError, error: registerError } = useRegister()
 
   const inputName = useRef()
   const inputEmail = useRef()
   const inputPassword = useRef()
   const inputConfirmPassword = useRef()
-  const inputRole = useRef()
 
   const [visible, setVisible] = useState(false)
   const [inputValue, setInputValue] = useState("")
@@ -39,8 +40,9 @@ function Home() {
     registerUser({
       name: inputName.current.value,
       email: inputEmail.current.value,
-      password: inputPassword.current.value,
-      role: inputRole.current.value
+      password: inputPassword.current.value
+    }, {
+      onSuccess: () => navigate('/login', { replace: true })
     })
   }
 
@@ -77,9 +79,8 @@ function Home() {
           type="password"
           ref={inputConfirmPassword}
         />
-        <input placeholder="Role" name='Role' type="text" ref={inputRole} />
 
-        {isError && <small className="error-text">{registerError?.message ?? "Erro ao cadastrar. Tente novamente."}</small>}
+        {isError && <small className="error-text">{registerError?.mensagem ?? "Erro ao cadastrar. Tente novamente."}</small>}
 
         <button type='button' onClick={createUser} disabled={isPending}>
           {isPending ? "Enviando..." : "Next"}

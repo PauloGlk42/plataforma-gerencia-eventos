@@ -1,9 +1,8 @@
 import { useMutation } from "@tanstack/react-query"
-import api from '../services/api'
+import { http } from '../lib/http'
 
-async function registerUser(userData) {
-  const response = await api.post('/api/Auth/register', userData)
-  return response?.data?.data
+async function registerUser({ name, email, password }) {
+  return http.post('/auth/register', { name, login: email, password }, { auth: false })
 }
 
 export function useRegister() {
