@@ -71,7 +71,7 @@ A princípio, daria para começar com a ideia de que existe uma tela inicial que
 - Definir conceitualmente qual o núcleo do software, que deve estar funcionando 100% antes de implementar os requisitos e incrementar com ideias, por exemplo.
 
 ### Resumo do dia 19/08: 
-- Pensando em coisas como deploy, que queria muito fazer, acabei optando por react + vite devido à compatibilidade com a Vercel. Para o backend, que decidi fazer em Java seguindo o modelo organizacional de camadas, e para banco PostgreSQL. Seria interessante enviar ao Railway por questões de  compatibilidade.
+- Pensando em coisas como deploy, que queria muito fazer, acabei optando por react + vite devido à compatibilidade com a Vercel. Para o backend, que decidi fazer em Java seguindo o modelo organizacional de camadas, e para banco PostgreSQL, por questões de entidades relacionadas, consistencia(Unique para registros entre evento e assento ou check para quantidade de ingressos), compatibilidade e liberdade para uso. Seria interessante enviar ao Railway por questões de  compatibilidade.
 
 Acabei fazendo na mão as inicializações e configurações iniciais do backend. Comecei pela autenticação por questão das roles, vendo tutoriais, documentação ou consultando IAs para ver as políticas de segurança aplicáveis no projeto. Com JWT e gerenciamento stateless e algumas classes, dei início a essa parte do projeto. Frontend e partes teóricas não deram tempo de fazer hoje.
 
@@ -82,9 +82,38 @@ Acabei fazendo na mão as inicializações e configurações iniciais do backend
 - Definir conceitualmente qual o núcleo do software, que deve estar funcionando 100% antes de implementar os requisitos e incrementar com ideias, por exemplo.
 - Implementar algumas das principais funcionalidades do backend.
 
-### Questões pendentes:
+### Resumo do dias 20/08
+- Esboço do banco feito, apenas para evitar grandes retrabalhos depois e entender melhor o fluxo interno mesmo
+- Frontend inicializado com uma tela de registro
+- Feito um markdown para fixar melhor o escopo pensando na parte de banco de dados. 
+- Devido estar acompanhando uma atualização de um sistema de armazém de uma empresa presencialmente, tenho a parte da noite apenas, então terei que continuar as implementações amanhã e focar em ter o núcleo: conseguir criar um evento como organizar e comprar um ingresso como cliente.
+- Analisei também as plataformas sugeridas para ter ideias do frontend, pois as cores que escolhi para a tela de registro não ficaram boas
+
+### Objetivo do dia 21/08:
+- Implementar as principais Entidades, controller, servicos e repositórios.
+- Definir um estilo para as telas bem como suas funções.
+- Migrations(flyway)
+- Swagger
+
+### Resumo do dia 21/08:
+- Não tive tanto tempo quanto gostaria e vou ter que trabalhar no sábado. Então foi feito um repasse em algumas tecnicas para tentar afinar a arquitetura do software, inicio de configurações para auxilio da IA,
+criaçãop das principais Entidades JPA, enums e suas repotorios, seed de alguns dados usando usandos as novas migrations
+- Definir um estilo para as telas bem como suas funções.
+
+
+### Objetivo do dia 22/08:
+- Frontend para o que foi implementado anteriormente
+
+### Objetivo do dia 22/08:
+- Finalizar backend
+
+### Objetivo do dia 23/08:
+- Finalizar frontend
+
+### Objetivo do dia 24/08:
+- Deploy e testes.
+
+### Questões futuras:
 - Uso do Docker
-- Migrations (Flyway) para facilitar
-- Swagger e testes  
 - Refresh token?
 - Cors
