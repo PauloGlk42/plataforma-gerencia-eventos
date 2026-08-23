@@ -116,15 +116,27 @@ public class EventoService {
         return pagina.map(evento -> paraResumo(evento, precosMinimos.get(evento.getId())));
     }
 
-    public EventoDetalheDTO buscarDetalhePublico(Long eventoId) {
+    public EventoDetalheDTO buscarDetalhePublico(Long eventoId, User usuarioAtual) {
         Evento evento = eventoRepository.findById(eventoId)
-                .filter(e -> e.getStatus() == StatusEvento.PUBLICADO)
+                .filter(e -> podeVisualizar(e, usuarioAtual))
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Evento não encontrado"));
         List<Setor> setores = setorRepository.findByEvento(evento);
         return new EventoDetalheDTO(evento.getId(), evento.getTipo(), evento.getFonte(), evento.getIdExterno(),
                 evento.getTitulo(), evento.getSinopse(), evento.getImagemUrl(), evento.getMetadados(),
                 evento.getLocalNome(), evento.getCidade(), evento.getUf(), evento.getInicio(), evento.getFim(),
                 evento.getStatus(), setores.stream().map(SetorDTO::de).toList());
+    }
+
+    /**
+     * Rascunho/cancelado só é visível pro organizador dono. Qualquer outro caso vira
+     * "não encontrado" (404), nunca "acesso negado" (403) — 403 confirmaria pra quem não
+     * é dono que o evento existe.
+     */
+    private boolean podeVisualizar(Evento evento, User usuarioAtual) {
+        if (evento.getStatus() == StatusEvento.PUBLICADO) {
+            return true;
+        }
+        return usuarioAtual != null && evento.getOrganizador().getId().equals(usuarioAtual.getId());
     }
 
     private List<EventoResumoDTO> paraResumos(List<Evento> eventos) {

@@ -78,7 +78,7 @@ public class EventoController {
     }
 
     @GetMapping("/eventos/{id}")
-    public ResponseEntity<EventoDetalheDTO> detalhe(@PathVariable Long id) {
-        return ResponseEntity.ok(eventoService.buscarDetalhePublico(id));
+    public ResponseEntity<EventoDetalheDTO> detalhe(@PathVariable Long id, @AuthenticationPrincipal User usuario) {
+        return ResponseEntity.ok(eventoService.buscarDetalhePublico(id, usuario));
     }
 }
