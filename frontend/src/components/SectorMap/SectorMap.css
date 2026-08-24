@@ -1,0 +1,15 @@
+/* Copiado de docs/prototipo-home.html (.venue, .stage-shape, texto do mapa, #hatch). */
+
+.venue { width: 100%; height: auto; display: block; margin: 4px 0 14px; }
+.venue [data-sector] { cursor: pointer; transition: opacity .14s ease; }
+.venue [data-sector]:hover { opacity: .84; }
+.venue [data-sector][aria-disabled="true"] { cursor: not-allowed; opacity: .55; }
+.venue [data-sector][aria-pressed="true"] { stroke: var(--accent); stroke-width: 2.5; }
+.venue .stage-shape { fill: var(--stage); }
+.venue .screen-glow { fill: var(--stage); opacity: .35; }
+.venue text {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  pointer-events: none; text-anchor: middle; fill: var(--ink);
+}
+.venue .lbl-sub { font-weight: 400; font-size: 10px; }
+.venue .lbl-light { fill: #FFFFFF; }

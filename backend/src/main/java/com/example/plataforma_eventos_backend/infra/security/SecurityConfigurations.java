@@ -40,8 +40,12 @@ public class SecurityConfigurations {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                                            // preflight do navegador não carrega Authorization; sem isso, requisição
+                                            // cross-origin cai em anyRequest().authenticated() e vira 403 antes do CORS
+                                            // do Spring conseguir responder o OPTIONS
+                                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                                             .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                                            .requestMatchers(HttpMethod.POST, "/auth/register").permitAll() //tirar depois de decidir como vai funcionar a parte de roles
+                                            .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                                             .requestMatchers("/error")
                                             .permitAll()
                                             .requestMatchers(HttpMethod.GET, "/api/eventos/meus").hasRole("ORGANIZADOR")

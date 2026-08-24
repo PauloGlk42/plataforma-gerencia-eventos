@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import './Login.css'
+import PasswordField from '../../components/PasswordField/PasswordField'
 
 export default function Login() {
   const { login } = useAuth()
@@ -43,13 +43,14 @@ export default function Login() {
                 value={loginValue} onChange={e => setLoginValue(e.target.value)}
               />
             </div>
-            <div className="field">
-              <label htmlFor="password">Senha</label>
-              <input
-                id="password" type="password" autoComplete="current-password" required
-                value={senha} onChange={e => setSenha(e.target.value)}
-              />
-            </div>
+            <PasswordField
+              id="password"
+              label="Senha"
+              value={senha}
+              onChange={e => setSenha(e.target.value)}
+              autoComplete="current-password"
+              required
+            />
 
             {erro && <p className="auth-error" role="alert">{erro}</p>}
 

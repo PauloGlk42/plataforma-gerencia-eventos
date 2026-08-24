@@ -1,93 +1,90 @@
-import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import './Style.css'
-import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai'
-import { FiLock } from 'react-icons/fi'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useRegister } from '../../hooks/useRegister'
+import PasswordField from '../../components/PasswordField/PasswordField'
 
-function Home() {
+export default function Register() {
   const navigate = useNavigate()
-  const { mutate: registerUser, isPending, isError, error: registerError } = useRegister()
+  const { mutateAsync: registrar, isPending } = useRegister()
 
-  const inputName = useRef()
-  const inputEmail = useRef()
-  const inputPassword = useRef()
-  const inputConfirmPassword = useRef()
+  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
+  const [senha, setSenha] = useState('')
+  const [confirmacao, setConfirmacao] = useState('')
+  const [erro, setErro] = useState(null)
 
-  const [visible, setVisible] = useState(false)
-  const [inputValue, setInputValue] = useState("")
-  const [error, setError] = useState("")
+  async function aoSubmeter(evento) {
+    evento.preventDefault()
+    setErro(null)
 
-  const handleChange = (e) => {
-    const value = e.target.value
-    setInputValue(value)
-
-    if (value.length < 6) {
-      setError("Password must contain at least 6 characters")
-    } else {
-      setError("")
+    if (senha.length < 6) {
+      setErro('A senha precisa ter pelo menos 6 caracteres.')
+      return
     }
-  }
-
-  const toggleVisibility = () => setVisible(!visible)
-
-  function createUser() {
-    if (inputPassword.current.value !== inputConfirmPassword.current.value) {
-      setError("Passwords do not match")
+    if (senha !== confirmacao) {
+      setErro('As senhas não coincidem.')
       return
     }
 
-    registerUser({
-      name: inputName.current.value,
-      email: inputEmail.current.value,
-      password: inputPassword.current.value
-    }, {
-      onSuccess: () => navigate('/login', { replace: true })
-    })
+    try {
+      await registrar({ name: nome, email, password: senha })
+      navigate('/login', { replace: true })
+    } catch (err) {
+      setErro(err.mensagem ?? 'Não foi possível cadastrar. Tente novamente.')
+    }
   }
 
   return (
-    <div className='container'>
-      <form action="">
-        <h1>Cadastro de Usuários</h1>
-        <input placeholder="Name" name='Name' type="text" ref={inputName} />
-        <input placeholder="youremail@exemple.com" name='Email' type="email" ref={inputEmail} />
+    <div className="app-shell auth-page">
+      <div className="wrap">
+        <div className="auth-card">
+          <Link className="auth-back" to="/">← Voltar para eventos</Link>
+          <h1>Criar conta</h1>
+          <p className="auth-sub">Cadastre-se para comprar ingressos.</p>
 
-        <div className={`password-wrapper ${error ? "error" : ""}`}>
-          <FiLock size={20} />
+          <form onSubmit={aoSubmeter} className="auth-form">
+            <div className="field">
+              <label htmlFor="nome">Nome</label>
+              <input
+                id="nome" type="text" autoComplete="name" required
+                value={nome} onChange={e => setNome(e.target.value)}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="email">E-mail</label>
+              <input
+                id="email" type="email" autoComplete="email" required
+                value={email} onChange={e => setEmail(e.target.value)}
+              />
+            </div>
 
-          <input
-            type={visible ? "text" : "password"}
-            placeholder="Password"
-            ref={inputPassword}
-            onChange={handleChange}
-          />
+            <PasswordField
+              id="senha"
+              label="Senha"
+              value={senha}
+              onChange={e => setSenha(e.target.value)}
+              autoComplete="new-password"
+              required
+            />
+            <PasswordField
+              id="confirmacao"
+              label="Confirmar senha"
+              value={confirmacao}
+              onChange={e => setConfirmacao(e.target.value)}
+              autoComplete="new-password"
+              required
+            />
 
-          <button
-            type="button"
-            className="toggle-btn"
-            onClick={toggleVisibility}
-          >
-            {visible ? <AiFillEye size={20} /> : <AiFillEyeInvisible size={20} />}
-          </button>
+            {erro && <p className="auth-error" role="alert">{erro}</p>}
+
+            <button className="cta" type="submit" disabled={isPending}>
+              {isPending ? 'Cadastrando…' : 'Criar conta'}
+            </button>
+          </form>
+
+          <p className="auth-foot">Já tem conta? <Link to="/login">Entrar</Link></p>
         </div>
-        {error && <small className="error-text">{error}</small>}
-
-        <input
-          placeholder="Confirm your password"
-          name='ConfirmPassword'
-          type="password"
-          ref={inputConfirmPassword}
-        />
-
-        {isError && <small className="error-text">{registerError?.mensagem ?? "Erro ao cadastrar. Tente novamente."}</small>}
-
-        <button type='button' onClick={createUser} disabled={isPending}>
-          {isPending ? "Enviando..." : "Next"}
-        </button>
-      </form>
+      </div>
     </div>
   )
 }
-
-export default Home
