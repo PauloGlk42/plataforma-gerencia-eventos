@@ -6,6 +6,7 @@ import com.example.plataforma_eventos_backend.domain.ingresso.StatusIngresso;
 import com.example.plataforma_eventos_backend.domain.ingresso.dtos.IngressoDTO;
 import com.example.plataforma_eventos_backend.domain.ingresso.dtos.IngressoPublicoDTO;
 import com.example.plataforma_eventos_backend.domain.ingresso.dtos.IngressosPorEventoDTO;
+import com.example.plataforma_eventos_backend.domain.ingresso.dtos.ValidacaoRespostaDTO;
 import com.example.plataforma_eventos_backend.domain.pedido.Pedido;
 import com.example.plataforma_eventos_backend.domain.pedido.PedidoItem;
 import com.example.plataforma_eventos_backend.domain.user.User;
@@ -67,6 +68,42 @@ public class IngressoService {
             }
         }
         ingressoRepository.saveAll(ingressos);
+    }
+
+    /**
+     * Ordem crítica: 1) assinatura, sem tocar no banco — código forjado nem chega a
+     * consultar o ingresso; 2) evento, antes de marcar como utilizado — um ingresso
+     * legítimo apresentado no portão errado não pode ser queimado, senão o cliente perde
+     * a entrada ao tentar de novo no portão certo; 3) só então o UPDATE condicional que
+     * consome o ingresso. 0 linhas afetadas nesse UPDATE = outra leitura venceu a corrida.
+     */
+    @Transactional
+    public ValidacaoRespostaDTO validar(String codigo, Long eventoId, User portaria) {
+        if (!assinaturaValida(codigo)) {
+            return ValidacaoRespostaDTO.invalido();
+        }
+
+        Ingresso ingresso = ingressoRepository.findByCodigo(codigo).orElse(null);
+        if (ingresso == null || ingresso.getStatus() == StatusIngresso.CANCELADO) {
+            return ValidacaoRespostaDTO.invalido();
+        }
+
+        Evento evento = ingresso.getPedido().getEvento();
+        if (!evento.getId().equals(eventoId)) {
+            return ValidacaoRespostaDTO.eventoErrado();
+        }
+
+        if (ingresso.getStatus() == StatusIngresso.UTILIZADO) {
+            return ValidacaoRespostaDTO.jaUtilizado(ingresso.getValidadoEm());
+        }
+
+        int linhasAfetadas = ingressoRepository.marcarUtilizado(ingresso.getId(), portaria.getId());
+        if (linhasAfetadas == 0) {
+            Ingresso atual = ingressoRepository.findById(ingresso.getId()).orElseThrow();
+            return ValidacaoRespostaDTO.jaUtilizado(atual.getValidadoEm());
+        }
+
+        return ValidacaoRespostaDTO.valido(evento.getTitulo(), ingresso.getSetor().getNome(), evento.getInicio());
     }
 
     public boolean assinaturaValida(String codigo) {

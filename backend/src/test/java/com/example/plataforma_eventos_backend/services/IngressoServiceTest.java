@@ -6,6 +6,9 @@ import com.example.plataforma_eventos_backend.domain.evento.Setor;
 import com.example.plataforma_eventos_backend.domain.evento.StatusEvento;
 import com.example.plataforma_eventos_backend.domain.evento.TipoEvento;
 import com.example.plataforma_eventos_backend.domain.ingresso.Ingresso;
+import com.example.plataforma_eventos_backend.domain.ingresso.ResultadoValidacao;
+import com.example.plataforma_eventos_backend.domain.ingresso.StatusIngresso;
+import com.example.plataforma_eventos_backend.domain.ingresso.dtos.ValidacaoRespostaDTO;
 import com.example.plataforma_eventos_backend.domain.pedido.Pedido;
 import com.example.plataforma_eventos_backend.domain.pedido.PedidoItem;
 import com.example.plataforma_eventos_backend.domain.pedido.dtos.CriarPedidoDTO;
@@ -28,9 +31,16 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -55,6 +65,7 @@ class IngressoServiceTest {
 
     private User organizador;
     private User cliente;
+    private User portaria;
     private Evento evento;
     private Setor setor;
 
@@ -62,8 +73,10 @@ class IngressoServiceTest {
     void setUp() {
         organizador = (User) userRepository.findByLogin("organizador@evento.com");
         cliente = (User) userRepository.findByLogin("cliente1@evento.com");
+        portaria = (User) userRepository.findByLogin("portaria@evento.com");
         assertNotNull(organizador, "seed V8 (organizador@evento.com) precisa estar aplicado");
         assertNotNull(cliente, "seed V8 (cliente1@evento.com) precisa estar aplicado");
+        assertNotNull(portaria, "seed V8 (portaria@evento.com) precisa estar aplicado");
     }
 
     @AfterEach
@@ -101,6 +114,95 @@ class IngressoServiceTest {
 
         assertFalse(ingressoService.assinaturaValida("identificador-forjado.assinatura-forjada"));
         assertFalse(ingressoService.assinaturaValida("sem-separador-de-assinatura"));
+    }
+
+    @Test
+    void validaNaPrimeiraLeituraEJaUtilizadoNaSegunda() {
+        criarEventoESetor(5);
+        Ingresso ingresso = emitirIngressoDeTeste();
+
+        ValidacaoRespostaDTO primeira = ingressoService.validar(ingresso.getCodigo(), evento.getId(), portaria);
+        assertEquals(ResultadoValidacao.VALIDO, primeira.resultado());
+        assertEquals(evento.getTitulo(), primeira.eventoTitulo());
+        assertEquals(setor.getNome(), primeira.setorNome());
+
+        ValidacaoRespostaDTO segunda = ingressoService.validar(ingresso.getCodigo(), evento.getId(), portaria);
+        assertEquals(ResultadoValidacao.JA_UTILIZADO, segunda.resultado());
+        assertNotNull(segunda.validadoEm());
+    }
+
+    @Test
+    void eventoErradoDevolveEventoErradoESeguraIngressoValido() {
+        criarEventoESetor(5);
+        Ingresso ingresso = emitirIngressoDeTeste();
+        long eventoInexistente = evento.getId() + 999_999L;
+
+        ValidacaoRespostaDTO resposta = ingressoService.validar(ingresso.getCodigo(), eventoInexistente, portaria);
+        assertEquals(ResultadoValidacao.EVENTO_ERRADO, resposta.resultado());
+
+        Ingresso atual = ingressoRepository.findById(ingresso.getId()).orElseThrow();
+        assertEquals(StatusIngresso.VALIDO, atual.getStatus());
+        assertNull(atual.getValidadoEm());
+    }
+
+    @Test
+    void assinaturaAdulteradaDevolveInvalido() {
+        criarEventoESetor(5);
+
+        ValidacaoRespostaDTO codigoForjado = ingressoService.validar(
+                "identificador-forjado.assinatura-forjada", evento.getId(), portaria);
+        assertEquals(ResultadoValidacao.INVALIDO, codigoForjado.resultado());
+
+        ValidacaoRespostaDTO semSeparador = ingressoService.validar(
+                "sem-separador-de-assinatura", evento.getId(), portaria);
+        assertEquals(ResultadoValidacao.INVALIDO, semSeparador.resultado());
+    }
+
+    @Test
+    void validacoesConcorrentesDoMesmoIngressoSoUmaRetornaValido() throws InterruptedException {
+        criarEventoESetor(5);
+        Ingresso ingresso = emitirIngressoDeTeste();
+        int totalThreads = 10;
+
+        ExecutorService pool = Executors.newFixedThreadPool(totalThreads);
+        CountDownLatch largada = new CountDownLatch(1);
+        CountDownLatch chegada = new CountDownLatch(totalThreads);
+        AtomicInteger validos = new AtomicInteger();
+        AtomicInteger jaUtilizados = new AtomicInteger();
+
+        for (int i = 0; i < totalThreads; i++) {
+            pool.submit(() -> {
+                try {
+                    largada.await();
+                    ValidacaoRespostaDTO resposta = ingressoService.validar(ingresso.getCodigo(), evento.getId(), portaria);
+                    if (resposta.resultado() == ResultadoValidacao.VALIDO) {
+                        validos.incrementAndGet();
+                    } else if (resposta.resultado() == ResultadoValidacao.JA_UTILIZADO) {
+                        jaUtilizados.incrementAndGet();
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    chegada.countDown();
+                }
+            });
+        }
+
+        largada.countDown();
+        assertTrue(chegada.await(30, TimeUnit.SECONDS), "threads não terminaram a tempo");
+        pool.shutdown();
+
+        assertEquals(1, validos.get(), "só uma validação concorrente pode ganhar");
+        assertEquals(totalThreads - 1, jaUtilizados.get());
+    }
+
+    private Ingresso emitirIngressoDeTeste() {
+        PedidoDetalheDTO pedidoDTO = bookingService.reservar(
+                new CriarPedidoDTO(evento.getId(), List.of(new ItemPedidoDTO(setor.getId(), 1))), cliente);
+        Pedido pedido = pedidoRepository.findById(pedidoDTO.id()).orElseThrow();
+        List<PedidoItem> itens = pedidoItemRepository.findByPedido(pedido);
+        ingressoService.emitir(pedido, itens);
+        return ingressoRepository.findByPedido(pedido).get(0);
     }
 
     private void criarEventoESetor(int capacidade) {

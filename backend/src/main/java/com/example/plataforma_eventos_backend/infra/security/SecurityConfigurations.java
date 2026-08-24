@@ -48,6 +48,8 @@ public class SecurityConfigurations {
                                             .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                                             .requestMatchers("/error")
                                             .permitAll()
+                                            .requestMatchers(HttpMethod.GET, "/api/portaria/eventos").hasRole("PORTARIA")
+                                            .requestMatchers(HttpMethod.POST, "/api/validacao").hasRole("PORTARIA")
                                             .requestMatchers(HttpMethod.GET, "/api/eventos/meus").hasRole("ORGANIZADOR")
                                             .requestMatchers(HttpMethod.GET, "/api/catalogo").hasRole("ORGANIZADOR")
                                             .requestMatchers(HttpMethod.POST, "/api/eventos/*/publicar").hasRole("ORGANIZADOR")

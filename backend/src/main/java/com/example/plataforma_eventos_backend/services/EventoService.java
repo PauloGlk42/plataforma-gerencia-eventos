@@ -10,6 +10,7 @@ import com.example.plataforma_eventos_backend.domain.evento.TipoEvento;
 import com.example.plataforma_eventos_backend.domain.evento.dtos.CriarEventoDTO;
 import com.example.plataforma_eventos_backend.domain.evento.dtos.CriarSetorDTO;
 import com.example.plataforma_eventos_backend.domain.evento.dtos.EventoDetalheDTO;
+import com.example.plataforma_eventos_backend.domain.evento.dtos.EventoPortariaDTO;
 import com.example.plataforma_eventos_backend.domain.evento.dtos.EventoResumoDTO;
 import com.example.plataforma_eventos_backend.domain.evento.dtos.SetorDTO;
 import com.example.plataforma_eventos_backend.domain.user.User;
@@ -86,6 +87,12 @@ public class EventoService {
 
     public List<EventoResumoDTO> buscarPorOrganizador(User organizador) {
         return paraResumos(eventoRepository.findByOrganizador(organizador));
+    }
+
+    public List<EventoPortariaDTO> buscarPublicadosParaPortaria() {
+        return eventoRepository.findByStatusOrderByInicio(StatusEvento.PUBLICADO).stream()
+                .map(EventoPortariaDTO::de)
+                .toList();
     }
 
     @Transactional
