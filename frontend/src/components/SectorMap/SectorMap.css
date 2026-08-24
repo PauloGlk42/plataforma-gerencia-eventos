@@ -6,6 +6,7 @@
 .venue [data-sector][aria-disabled="true"] { cursor: not-allowed; opacity: .55; }
 .venue [data-sector][aria-pressed="true"] { stroke: var(--accent); stroke-width: 2.5; }
 .venue .stage-shape { fill: var(--stage); }
+.venue .screen-glow { fill: var(--stage); opacity: .35; }
 .venue text {
   font-family: var(--font-sans); font-size: 11px; font-weight: 600;
   pointer-events: none; text-anchor: middle; fill: var(--ink);

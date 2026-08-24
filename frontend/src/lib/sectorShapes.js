@@ -1,7 +1,8 @@
 // Geometria fixa por slug, extraída da planta estilizada de docs/prototipo-home.html.
-// Slugs reais em uso vêm das migrations V6/V9: SHOW usa PISTA, PLATEIA(_A/_B),
-// CAMAROTE(_A/_B); FILME usa SALA, SALA_1/SALA_2, SALA_VIP. Setor com slug fora
-// deste mapa simplesmente não aparece no SVG — segue só na lista ao lado.
+// Slugs reais em uso vêm das migrations V6/V9/V11: SHOW usa PISTA, PLATEIA(_A/_B),
+// CAMAROTE(_A/_B), ARQUIBANCADA; FILME usa PLATEIA e, quando a sessão reserva uma
+// faixa de poltrona premium, VIP. Setor com slug fora deste mapa simplesmente não
+// aparece no SVG — segue só na lista ao lado.
 
 const SHOW_VIEWBOX = '0 0 400 320'
 
@@ -26,24 +27,54 @@ const SHOW_SHAPES = {
   },
 }
 
+// Planta de sala de cinema: tela em destaque no topo, plateia como auditório em leque
+// (mais larga no fundo da sala, cantos suavizados, curvando levemente em direção à
+// tela). Quando a sessão reserva uma faixa de poltrona premium, ela ocupa a metade de
+// trás da mesma sala (FILME_SHAPES_DIVIDIDA); sessão com um setor só usa a sala
+// inteira, seja PLATEIA ou VIP (FILME_SHAPES_UNICA) — nunca uma tira sozinha.
+
 const FILME_VIEWBOX = '0 0 400 240'
 
 const FILME_DECORATIVE = [
-  { key: 'tela', shape: 'rect', x: 80, y: 16, width: 240, height: 16, rx: 2, className: 'stage-shape' },
+  { key: 'tela-glow', shape: 'rect', x: 60, y: 10, width: 280, height: 30, rx: 15, className: 'screen-glow' },
+  { key: 'tela', shape: 'rect', x: 100, y: 18, width: 200, height: 10, rx: 5, className: 'stage-shape' },
 ]
-const FILME_DECORATIVE_LABELS = [{ x: 200, y: 29, texto: 'TELA' }]
+const FILME_DECORATIVE_LABELS = [{ x: 200, y: 46, texto: 'TELA' }]
 
-const FILME_SHAPES = {
-  SALA: { shape: 'rect', x: 60, y: 56, width: 280, height: 150, rx: 4, labelX: 200, labelY: 128 },
-  SALA_VIP: { shape: 'rect', x: 60, y: 56, width: 280, height: 150, rx: 4, labelX: 200, labelY: 128 },
-  PLATEIA: { shape: 'rect', x: 60, y: 56, width: 280, height: 150, rx: 4, labelX: 200, labelY: 128 },
-  SALA_1: { shape: 'rect', x: 40, y: 56, width: 155, height: 150, rx: 4, labelX: 117, labelY: 128 },
-  SALA_2: { shape: 'rect', x: 205, y: 56, width: 155, height: 150, rx: 4, labelX: 282, labelY: 128 },
+const SALA_INTEIRA = {
+  shape: 'path',
+  d: 'M 160 60 Q 200 48 240 60 C 268 68 300 95 320 135 Q 336 168 322 192 Q 300 210 250 206 L 150 206 Q 100 210 78 192 Q 64 168 80 135 C 100 95 132 68 160 60 Z',
+  labelX: 200,
+  labelY: 136,
 }
 
-export function geometriaPorTipo(tipo) {
+const FILME_SHAPES_UNICA = { PLATEIA: SALA_INTEIRA, VIP: SALA_INTEIRA }
+
+const FILME_SHAPES_DIVIDIDA = {
+  PLATEIA: {
+    shape: 'path',
+    d: 'M 160 60 Q 200 48 240 60 C 268 68 300 95 315 150 Q 200 158 85 150 C 100 95 132 68 160 60 Z',
+    labelX: 200,
+    labelY: 108,
+  },
+  VIP: {
+    shape: 'path',
+    d: 'M 85 150 Q 200 158 315 150 Q 336 178 322 195 Q 300 212 250 208 L 150 208 Q 100 212 78 195 Q 64 178 85 150 Z',
+    labelX: 200,
+    labelY: 176,
+  },
+}
+
+export function geometriaPorTipo(tipo, setores = []) {
   if (tipo === 'FILME') {
-    return { viewBox: FILME_VIEWBOX, decorativos: FILME_DECORATIVE, rotulosDecorativos: FILME_DECORATIVE_LABELS, shapes: FILME_SHAPES }
+    const slugs = new Set(setores.map(s => s.slug))
+    const dividida = slugs.has('PLATEIA') && slugs.has('VIP')
+    return {
+      viewBox: FILME_VIEWBOX,
+      decorativos: FILME_DECORATIVE,
+      rotulosDecorativos: FILME_DECORATIVE_LABELS,
+      shapes: dividida ? FILME_SHAPES_DIVIDIDA : FILME_SHAPES_UNICA,
+    }
   }
   return { viewBox: SHOW_VIEWBOX, decorativos: SHOW_DECORATIVE, rotulosDecorativos: SHOW_DECORATIVE_LABELS, shapes: SHOW_SHAPES }
 }

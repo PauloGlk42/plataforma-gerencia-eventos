@@ -3,7 +3,7 @@ import { corMapaOcupacao, passoOcupacao } from '../../lib/color'
 import './SectorMap.css'
 
 export default function SectorMap({ tipo, setores, selecionado, onSelecionar }) {
-  const { viewBox, decorativos, rotulosDecorativos, shapes } = geometriaPorTipo(tipo)
+  const { viewBox, decorativos, rotulosDecorativos, shapes } = geometriaPorTipo(tipo, setores)
   const setoresComForma = setores.filter(s => shapes[s.slug])
 
   if (setoresComForma.length === 0) return null
