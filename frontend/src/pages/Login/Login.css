@@ -17,9 +17,9 @@
 }
 .auth-sub { color: var(--ink-2); font-size: 14px; margin: 0 0 20px; }
 
+/* Sem overrides próprios de .field aqui — mesma primitiva do protótipo (src/styles/shared.css),
+   pra login e senha ficarem com a largura e o padding idênticos aos demais campos da aplicação. */
 .auth-form { display: flex; flex-direction: column; gap: 14px; }
-.auth-form .field { padding: 9px 12px; }
-.auth-form .field input { font-size: 15px; }
 
 .auth-error {
   margin: 0; font-size: 13px; color: #C0392B; background: var(--surface-2);
