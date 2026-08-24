@@ -1,0 +1,33 @@
+.meus-ingressos { padding-bottom: 56px; }
+
+.grupo-evento { margin-bottom: 32px; }
+.grupo-evento-cabecalho { margin-bottom: 14px; }
+.grupo-evento-cabecalho h2 {
+  font-family: var(--font-display); font-weight: 500; font-size: 21px; margin: 0 0 3px;
+}
+.grupo-evento-cabecalho span { font-size: 13.5px; color: var(--ink-2); }
+
+.ingressos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+
+.ingresso-card {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+}
+.ingresso-qr { background: #fff; padding: 8px; border-radius: var(--radius); }
+
+.ingresso-info { display: flex; flex-direction: column; gap: 3px; }
+.ingresso-setor { font-weight: 600; font-size: 14.5px; }
+.ingresso-status {
+  font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.status-valido { color: var(--accent); }
+.status-utilizado { color: var(--ink-3); }
+.status-cancelado { color: #C0392B; }
+
+.btn-compartilhar {
+  font: inherit; font-size: 13px; cursor: pointer; width: 100%;
+  border: 1px solid var(--rule-2); background: var(--paper); color: var(--ink);
+  padding: 8px 12px; border-radius: var(--radius);
+}
+.btn-compartilhar:disabled { color: var(--ink-3); cursor: not-allowed; }
