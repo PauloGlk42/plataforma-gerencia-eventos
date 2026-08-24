@@ -73,7 +73,7 @@ public class EventoController {
             @RequestParam(required = false) BigDecimal precoMin,
             @RequestParam(required = false) BigDecimal precoMax,
             @RequestParam(required = false) TipoEvento tipo,
-            @PageableDefault(size = 20) Pageable pageable) {
+            @PageableDefault(size = 20, sort = "inicio") Pageable pageable) {
         return ResponseEntity.ok(eventoService.buscarPublicados(q, cidade, tipo, de, ate, precoMin, precoMax, pageable));
     }
 
