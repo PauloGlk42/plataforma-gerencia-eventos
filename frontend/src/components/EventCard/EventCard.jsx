@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { formatarDataHora, formatarPreco } from '../../lib/format'
 import { corDoTexto, corBarraOcupacao } from '../../lib/color'
 import './EventCard.css'
@@ -36,7 +37,7 @@ export default function EventCard({ evento }) {
   const temOcupacao = evento.capacidade != null && evento.ocupados != null
 
   return (
-    <article className="card">
+    <Link to={`/eventos/${evento.id}`} className="card">
       <div className="poster" style={temImagem ? undefined : { '--p': corDoTexto(evento.titulo) }}>
         <span className="kind">{evento.tipo}</span>
         {temImagem ? (
@@ -61,6 +62,6 @@ export default function EventCard({ evento }) {
           <strong>{evento.precoMinimo != null ? formatarPreco(evento.precoMinimo) : '—'}</strong>
         </div>
       </div>
-    </article>
+    </Link>
   )
 }
