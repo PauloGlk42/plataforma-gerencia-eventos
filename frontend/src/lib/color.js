@@ -26,3 +26,10 @@ export function corBarraOcupacao(razao) {
   const passo = passoOcupacao(razao)
   return passo === 'out' ? 'var(--occ-out)' : `var(--occ-${passo})`
 }
+
+// Mesma rampa, mas esgotado vira hachura (ver #hatch em SectorMap) em vez de cor sólida —
+// cor nunca é o único sinal de "esgotado".
+export function corMapaOcupacao(razao) {
+  const passo = passoOcupacao(razao)
+  return passo === 'out' ? 'url(#hatch)' : `var(--occ-${passo})`
+}
