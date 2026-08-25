@@ -1,4 +1,4 @@
-const KEY = 'bilheteria.auth'
+const KEY = 'que-evento.auth'
 
 export function loadAuth() {
   try {

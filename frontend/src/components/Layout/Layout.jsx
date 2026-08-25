@@ -19,7 +19,7 @@ export default function Layout() {
       <header className="masthead">
         <div className="wrap">
           <Link className="logo" to="/" title="Voltar para os eventos">
-            Bilheteria<em>.</em>
+            Que Evento<em>.</em>
           </Link>
           <nav className="top">
             <Link className="btn-search" to="/">

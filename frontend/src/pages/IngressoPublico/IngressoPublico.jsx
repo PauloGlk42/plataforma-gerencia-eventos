@@ -12,7 +12,7 @@ export default function IngressoPublico() {
   return (
     <div className="ingresso-publico-shell">
       <header className="ingresso-publico-header">
-        <Link className="logo" to="/">Bilheteria<em>.</em></Link>
+        <Link className="logo" to="/">Que Evento<em>.</em></Link>
       </header>
       <main className="wrap">
         {isLoading && <Carregando texto="Carregando ingresso…" />}
