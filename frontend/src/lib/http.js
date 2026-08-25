@@ -35,7 +35,10 @@ async function request(path, { method = 'GET', body, auth = true, headers = {} }
     throw new ApiError({ status: 0, mensagem: 'Não foi possível conectar ao servidor. Verifique sua conexão.' })
   }
 
-  if (response.status === 401) {
+  // só é "sessão expirada" quando a requisição levava um token e o servidor o rejeitou;
+  // um 401 sem token (ex.: login com senha errada) é credencial inválida, não sessão —
+  // a mensagem real do backend segue adiante pro fluxo normal de erro abaixo.
+  if (response.status === 401 && token) {
     clearAuth()
     window.dispatchEvent(new Event('auth:unauthorized'))
     redirectToLogin()
