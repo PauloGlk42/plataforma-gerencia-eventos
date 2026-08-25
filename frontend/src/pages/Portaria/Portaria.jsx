@@ -159,7 +159,9 @@ function Scanner({ ativo, onLido }) {
 }
 
 function ResultadoPainel({ resultado, onProximo }) {
-  const info = RESULTADO_INFO[resultado.resultado]
+  // fallback pra INVALIDO se o resultado vier num formato inesperado — melhor mostrar
+  // "código inválido" do que quebrar a tela da portaria no meio de uma fila.
+  const info = RESULTADO_INFO[resultado.resultado] ?? RESULTADO_INFO.INVALIDO
   const Icone = info.Icone
 
   return (
