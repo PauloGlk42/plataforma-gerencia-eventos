@@ -60,7 +60,6 @@ export default function MeusIngressos() {
     <section className="meus-ingressos">
       <div className="page-head">
         <h1>Meus ingressos</h1>
-        <p>Agrupados por evento, com o QR de cada ingresso.</p>
       </div>
 
       {grupos.map(grupo => (
