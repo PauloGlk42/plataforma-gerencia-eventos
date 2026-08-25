@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface EventoRepository extends JpaRepository<Evento, Long>, JpaSpecificationExecutor<Evento> {
     List<Evento> findByStatus(StatusEvento status);
+    List<Evento> findByStatusOrderByInicio(StatusEvento status);
     List<Evento> findByOrganizador(User organizador);
 }

@@ -1,0 +1,47 @@
+.portaria { padding-bottom: 56px; max-width: 440px; margin: 0 auto; }
+
+.portaria-evento-atual {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  color: var(--ink-2); margin: 0 0 20px; font-size: 14.5px;
+}
+.link-trocar {
+  font: inherit; font-size: 12.5px; color: var(--accent);
+  background: none; border: 0; cursor: pointer; padding: 0; text-decoration: underline;
+}
+
+.portaria-eventos { display: flex; flex-direction: column; gap: 10px; }
+.portaria-evento-card {
+  text-align: left; font: inherit; cursor: pointer; width: 100%;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 14px 16px; display: flex; flex-direction: column; gap: 3px;
+}
+.portaria-evento-card:hover { border-color: var(--accent); }
+.pe-titulo { font-weight: 600; font-size: 15px; }
+.pe-meta { font-size: 13px; color: var(--ink-2); }
+
+.scanner { margin-bottom: 16px; }
+.scanner-video {
+  width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius);
+  background: var(--stage); display: block;
+}
+.scanner-aviso {
+  margin: 10px 0 0; font-size: 13px; color: var(--ink-2);
+  background: var(--surface-2); border-radius: var(--radius); padding: 10px 12px;
+}
+
+.manual-form { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+
+.resultado {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 40px 24px;
+}
+.resultado svg { width: 52px; height: 52px; }
+.resultado-rotulo { font-family: var(--font-display); font-size: 24px; font-weight: 500; margin: 0; }
+.resultado-detalhe { display: flex; flex-direction: column; gap: 2px; color: var(--ink-2); font-size: 14px; margin-bottom: 8px; }
+.resultado .cta { max-width: 260px; }
+
+.res-valido svg, .res-valido .resultado-rotulo { color: var(--status-ok); }
+.res-invalido svg, .res-invalido .resultado-rotulo { color: var(--status-bad); }
+.res-utilizado svg, .res-utilizado .resultado-rotulo { color: var(--status-usado); }
+.res-errado svg, .res-errado .resultado-rotulo { color: var(--status-errado); }

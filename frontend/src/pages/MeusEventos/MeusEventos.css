@@ -1,0 +1,37 @@
+.meus-eventos { padding-bottom: 56px; }
+
+.btn-novo-evento {
+  display: inline-block; font: inherit; font-size: 14px; font-weight: 500;
+  text-decoration: none; cursor: pointer; margin-bottom: 20px;
+  border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent);
+  padding: 9px 16px; border-radius: var(--radius);
+}
+
+.eventos-lista { display: flex; flex-direction: column; gap: 10px; }
+
+.evento-row {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius);
+  padding: 16px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.evento-row-main { display: flex; align-items: center; gap: 20px; flex: 1; min-width: 260px; flex-wrap: wrap; }
+.evento-row-info { display: flex; flex-direction: column; gap: 3px; min-width: 200px; }
+.evento-row-titulo { font-weight: 600; font-size: 15px; }
+.evento-row-meta { font-size: 13px; color: var(--ink-2); }
+
+.evento-row .occ { min-width: 160px; flex: 1; max-width: 240px; }
+
+.evento-status {
+  font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  width: fit-content;
+}
+.status-rascunho { color: var(--ink-3); }
+.status-publicado { color: var(--status-ok); }
+.status-cancelado { color: var(--status-bad); }
+
+.evento-row-acao { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.btn-publicar {
+  font: inherit; font-size: 13.5px; font-weight: 500; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent);
+  padding: 8px 16px; border-radius: var(--radius); white-space: nowrap;
+}
+.btn-publicar:disabled { opacity: .6; cursor: not-allowed; }

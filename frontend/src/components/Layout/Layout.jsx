@@ -3,8 +3,16 @@ import { useAuth } from '../../context/AuthContext'
 import { iniciais } from '../../lib/text'
 import './Layout.css'
 
+// Cada papel vê o caminho pra sua própria tela principal; sem sessão (ou CLIENTE)
+// cai em "Meus ingressos", que já lida com redirecionar pro login se preciso.
+const LINK_POR_PAPEL = {
+  ORGANIZADOR: { to: '/organizador/eventos', rotulo: 'Meus eventos' },
+  PORTARIA: { to: '/portaria', rotulo: 'Portaria' },
+}
+
 export default function Layout() {
-  const { isAuthenticated, name } = useAuth()
+  const { isAuthenticated, name, role } = useAuth()
+  const linkPapel = LINK_POR_PAPEL[role] ?? { to: '/meus-ingressos', rotulo: 'Meus ingressos' }
 
   return (
     <div className="app-shell">
@@ -21,7 +29,7 @@ export default function Layout() {
               </svg>
               Buscar eventos
             </Link>
-            <Link className="navlink" to="/meus-ingressos">Meus ingressos</Link>
+            <Link className="navlink" to={linkPapel.to}>{linkPapel.rotulo}</Link>
             {isAuthenticated ? (
               <Link className="btn-conta" to="/perfil">
                 <span className="avatar" aria-hidden="true">{iniciais(name)}</span>

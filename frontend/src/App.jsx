@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { setNavigator } from './lib/navigation'
 import Layout from './components/Layout/Layout'
+import RotaPapel from './components/RotaPapel/RotaPapel'
 import Home from './pages/Home/Home'
 import Login from './pages/Login/Login'
 import Register from './pages/Register'
@@ -9,6 +10,9 @@ import EventoDetalhe from './pages/EventoDetalhe/EventoDetalhe'
 import Pagamento from './pages/Pagamento/Pagamento'
 import MeusIngressos from './pages/MeusIngressos/MeusIngressos'
 import IngressoPublico from './pages/IngressoPublico/IngressoPublico'
+import Portaria from './pages/Portaria/Portaria'
+import MeusEventos from './pages/MeusEventos/MeusEventos'
+import NovoEvento from './pages/NovoEvento/NovoEvento'
 import { Perfil, NaoEncontrada } from './pages/Stub/Stub'
 
 function NavigatorBridge() {
@@ -28,6 +32,9 @@ export default function App() {
           <Route path="pedidos/:id/pagamento" element={<Pagamento />} />
           <Route path="meus-ingressos" element={<MeusIngressos />} />
           <Route path="perfil" element={<Perfil />} />
+          <Route path="portaria" element={<RotaPapel papel="PORTARIA"><Portaria /></RotaPapel>} />
+          <Route path="organizador/eventos" element={<RotaPapel papel="ORGANIZADOR"><MeusEventos /></RotaPapel>} />
+          <Route path="organizador/eventos/novo" element={<RotaPapel papel="ORGANIZADOR"><NovoEvento /></RotaPapel>} />
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="registro" element={<Register />} />
