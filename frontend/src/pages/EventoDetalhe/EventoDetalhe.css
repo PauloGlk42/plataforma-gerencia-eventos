@@ -81,3 +81,7 @@
   margin: 0; font-size: 13px; color: #C0392B; background: var(--surface-2);
   border-radius: var(--radius); padding: 8px 11px;
 }
+.checkout-indisponivel {
+  border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface-2);
+  color: var(--ink-2); font-size: 13.5px; padding: 16px; margin-top: auto; text-align: center;
+}

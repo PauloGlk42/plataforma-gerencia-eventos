@@ -17,7 +17,8 @@ export default function EventoDetalhe() {
   const { id } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, role } = useAuth()
+  const podeComprar = !isAuthenticated || role === 'CLIENTE'
   const { data: evento, isLoading, isError, error, refetch } = useEvento(id)
   const reservar = useReservar()
 
@@ -143,37 +144,41 @@ export default function EventoDetalhe() {
             </ul>
           )}
 
-          <div className="checkout">
-            <div className="qty">
-              <span className="qty-label">
-                {setorAtual ? `${setorAtual.nome} · ${formatarPreco(setorAtual.preco)} cada` : 'Selecione um setor'}
-              </span>
-              <div className="stepper" role="group" aria-label="Quantidade de ingressos">
-                <button type="button" aria-label="Diminuir quantidade" disabled={!setorAtual} onClick={() => alterarQuantidade(-1)}>−</button>
-                <output>{quantidade}</output>
-                <button type="button" aria-label="Aumentar quantidade" disabled={!setorAtual} onClick={() => alterarQuantidade(1)}>+</button>
+          {podeComprar ? (
+            <div className="checkout">
+              <div className="qty">
+                <span className="qty-label">
+                  {setorAtual ? `${setorAtual.nome} · ${formatarPreco(setorAtual.preco)} cada` : 'Selecione um setor'}
+                </span>
+                <div className="stepper" role="group" aria-label="Quantidade de ingressos">
+                  <button type="button" aria-label="Diminuir quantidade" disabled={!setorAtual} onClick={() => alterarQuantidade(-1)}>−</button>
+                  <output>{quantidade}</output>
+                  <button type="button" aria-label="Aumentar quantidade" disabled={!setorAtual} onClick={() => alterarQuantidade(1)}>+</button>
+                </div>
               </div>
-            </div>
-            <div className="total">
-              <span className="lbl">Total</span>
-              <span className="val">{formatarPreco(setorAtual ? quantidade * setorAtual.preco : 0)}</span>
-            </div>
+              <div className="total">
+                <span className="lbl">Total</span>
+                <span className="val">{formatarPreco(setorAtual ? quantidade * setorAtual.preco : 0)}</span>
+              </div>
 
-            {erroReserva && <p className="erro-reserva" role="alert">{erroReserva}</p>}
+              {erroReserva && <p className="erro-reserva" role="alert">{erroReserva}</p>}
 
-            <button
-              className="cta"
-              disabled={!setorAtual || quantidade === 0 || reservar.isPending}
-              onClick={reservarAgora}
-            >
-              {reservar.isPending
-                ? 'Reservando…'
-                : quantidade === 0
-                  ? 'Reservar'
-                  : `Reservar ${quantidade} ${quantidade === 1 ? 'ingresso' : 'ingressos'}`}
-            </button>
-            <p className="hold">A reserva fica sua por <code>10 min</code> até a confirmação do pagamento.</p>
-          </div>
+              <button
+                className="cta"
+                disabled={!setorAtual || quantidade === 0 || reservar.isPending}
+                onClick={reservarAgora}
+              >
+                {reservar.isPending
+                  ? 'Reservando…'
+                  : quantidade === 0
+                    ? 'Reservar'
+                    : `Reservar ${quantidade} ${quantidade === 1 ? 'ingresso' : 'ingressos'}`}
+              </button>
+              <p className="hold">A reserva fica sua por <code>10 min</code> até a confirmação do pagamento.</p>
+            </div>
+          ) : (
+            <p className="checkout-indisponivel">Compra de ingressos disponível apenas para contas de cliente.</p>
+          )}
         </div>
       </div>
     </section>
