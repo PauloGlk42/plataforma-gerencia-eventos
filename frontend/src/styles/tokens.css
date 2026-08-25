@@ -37,10 +37,14 @@
   --font-display: "Bodoni Moda", Georgia, serif;
   --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
+
+  /* controles nativos do navegador (indicador de calendário, scrollbar) seguem o tema */
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --paper:      #0E1117;
     --surface:    #171B24;
     --surface-2:  #1F2531;
@@ -68,6 +72,7 @@
 }
 
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --paper:      #0E1117;
   --surface:    #171B24;
   --surface-2:  #1F2531;
