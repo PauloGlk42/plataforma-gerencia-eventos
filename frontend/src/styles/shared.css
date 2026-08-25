@@ -16,6 +16,16 @@
   color: var(--ink); min-width: 0; padding: 0; width: 100%;
 }
 .field input:focus, .field select:focus { outline: none; }
+
+/* a lista de opções do <select> é um popup nativo do navegador: "background:
+   transparent" do campo acima não se aplica a ela, e sem cor própria a option
+   cai no branco padrão do SO — com --ink claro (tema escuro) o texto fica
+   branco sobre fundo branco, ilegível. Cor explícita nas próprias options
+   corrige isso nos dois temas. */
+.field select option {
+  background: var(--surface);
+  color: var(--ink);
+}
 .field:focus-within { border-color: var(--accent); }
 
 /* autofill do navegador pinta fundo e texto com cores próprias (branco/cinza),
