@@ -89,7 +89,13 @@ public class IngressoService {
         }
 
         Evento evento = ingresso.getPedido().getEvento();
-        if (!evento.getId().equals(eventoId)) {
+        boolean eventoDeOutroPortao = !evento.getId().equals(eventoId);
+        // eventoId já vem filtrado pela lista de GET /portaria/eventos (só eventos do
+        // organizador dono do acesso), mas o corpo do POST é livre — sem esta checagem,
+        // um acesso de portaria poderia validar ingresso de evento de outro organizador
+        // bastando informar o eventoId certo.
+        boolean eventoDeOutroOrganizador = !evento.getOrganizador().getId().equals(portaria.getOrganizadorId());
+        if (eventoDeOutroPortao || eventoDeOutroOrganizador) {
             return ValidacaoRespostaDTO.eventoErrado();
         }
 

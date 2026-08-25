@@ -30,8 +30,8 @@ public class PortariaController {
     }
 
     @GetMapping("/portaria/eventos")
-    public ResponseEntity<List<EventoPortariaDTO>> eventos() {
-        return ResponseEntity.ok(eventoService.buscarPublicadosParaPortaria());
+    public ResponseEntity<List<EventoPortariaDTO>> eventos(@AuthenticationPrincipal User portaria) {
+        return ResponseEntity.ok(eventoService.buscarPublicadosParaPortaria(portaria));
     }
 
     @PostMapping("/validacao")

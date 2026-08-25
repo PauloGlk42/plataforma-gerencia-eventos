@@ -15,6 +15,7 @@ import com.example.plataforma_eventos_backend.domain.pedido.dtos.CriarPedidoDTO;
 import com.example.plataforma_eventos_backend.domain.pedido.dtos.ItemPedidoDTO;
 import com.example.plataforma_eventos_backend.domain.pedido.dtos.PedidoDetalheDTO;
 import com.example.plataforma_eventos_backend.domain.user.User;
+import com.example.plataforma_eventos_backend.domain.user.UserRoles;
 import com.example.plataforma_eventos_backend.repositories.EventoRepository;
 import com.example.plataforma_eventos_backend.repositories.IngressoRepository;
 import com.example.plataforma_eventos_backend.repositories.PedidoItemRepository;
@@ -69,6 +70,10 @@ class IngressoServiceTest {
     private Evento evento;
     private Setor setor;
 
+    private User organizadorOutro;
+    private Evento eventoOutroOrganizador;
+    private Setor setorOutroOrganizador;
+
     @BeforeEach
     void setUp() {
         organizador = (User) userRepository.findByLogin("organizador@evento.com");
@@ -81,16 +86,27 @@ class IngressoServiceTest {
 
     @AfterEach
     void tearDown() {
-        if (evento == null) {
-            return;
+        if (evento != null) {
+            pedidoRepository.findByCliente(cliente).stream()
+                    .filter(p -> p.getEvento().getId().equals(evento.getId()))
+                    .forEach(p -> {
+                        ingressoRepository.findByPedido(p).forEach(i -> ingressoRepository.deleteById(i.getId()));
+                        pedidoRepository.deleteById(p.getId());
+                    });
+            eventoRepository.deleteById(evento.getId());
         }
-        pedidoRepository.findByCliente(cliente).stream()
-                .filter(p -> p.getEvento().getId().equals(evento.getId()))
-                .forEach(p -> {
-                    ingressoRepository.findByPedido(p).forEach(i -> ingressoRepository.deleteById(i.getId()));
-                    pedidoRepository.deleteById(p.getId());
-                });
-        eventoRepository.deleteById(evento.getId());
+        if (eventoOutroOrganizador != null) {
+            pedidoRepository.findByCliente(cliente).stream()
+                    .filter(p -> p.getEvento().getId().equals(eventoOutroOrganizador.getId()))
+                    .forEach(p -> {
+                        ingressoRepository.findByPedido(p).forEach(i -> ingressoRepository.deleteById(i.getId()));
+                        pedidoRepository.deleteById(p.getId());
+                    });
+            eventoRepository.deleteById(eventoOutroOrganizador.getId());
+        }
+        if (organizadorOutro != null) {
+            userRepository.deleteById(organizadorOutro.getId());
+        }
     }
 
     @Test
@@ -194,6 +210,54 @@ class IngressoServiceTest {
 
         assertEquals(1, validos.get(), "só uma validação concorrente pode ganhar");
         assertEquals(totalThreads - 1, jaUtilizados.get());
+    }
+
+    @Test
+    void portariaDeUmOrganizadorNaoValidaIngressoDeEventoDeOutroOrganizador() {
+        organizadorOutro = new User("Outro Organizador", "outro-organizador-" + UUID.randomUUID() + "@evento.com", "senha-hash");
+        organizadorOutro.setRole(UserRoles.ORGANIZADOR);
+        userRepository.save(organizadorOutro);
+
+        eventoOutroOrganizador = new Evento();
+        eventoOutroOrganizador.setOrganizador(organizadorOutro);
+        eventoOutroOrganizador.setTipo(TipoEvento.SHOW);
+        eventoOutroOrganizador.setFonte(FonteCatalogo.LOCAL);
+        eventoOutroOrganizador.setTitulo("Evento de outro organizador — " + UUID.randomUUID());
+        eventoOutroOrganizador.setLocalNome("Outro local");
+        eventoOutroOrganizador.setCidade("Curitiba");
+        eventoOutroOrganizador.setUf("PR");
+        eventoOutroOrganizador.setInicio(OffsetDateTime.now().plusDays(30));
+        eventoOutroOrganizador.setStatus(StatusEvento.PUBLICADO);
+        OffsetDateTime agora = OffsetDateTime.now();
+        eventoOutroOrganizador.setCriadoEm(agora);
+        eventoOutroOrganizador.setAtualizadoEm(agora);
+        eventoRepository.save(eventoOutroOrganizador);
+
+        setorOutroOrganizador = new Setor();
+        setorOutroOrganizador.setEvento(eventoOutroOrganizador);
+        setorOutroOrganizador.setSlug("PISTA");
+        setorOutroOrganizador.setNome("Pista");
+        setorOutroOrganizador.setPreco(new BigDecimal("50.00"));
+        setorOutroOrganizador.setCapacidade(5);
+        setorOutroOrganizador.setOcupados(0);
+        setorRepository.save(setorOutroOrganizador);
+
+        PedidoDetalheDTO pedidoDTO = bookingService.reservar(
+                new CriarPedidoDTO(eventoOutroOrganizador.getId(), List.of(new ItemPedidoDTO(setorOutroOrganizador.getId(), 1))), cliente);
+        Pedido pedido = pedidoRepository.findById(pedidoDTO.id()).orElseThrow();
+        List<PedidoItem> itens = pedidoItemRepository.findByPedido(pedido);
+        ingressoService.emitir(pedido, itens);
+        Ingresso ingresso = ingressoRepository.findByPedido(pedido).get(0);
+
+        // portaria (seed) pertence ao organizador do seed, não ao organizadorOutro criado
+        // aqui — mesmo informando o eventoId correto, a validação deve recusar.
+        ValidacaoRespostaDTO resposta = ingressoService.validar(
+                ingresso.getCodigo(), eventoOutroOrganizador.getId(), portaria);
+        assertEquals(ResultadoValidacao.EVENTO_ERRADO, resposta.resultado());
+
+        Ingresso atual = ingressoRepository.findById(ingresso.getId()).orElseThrow();
+        assertEquals(StatusIngresso.VALIDO, atual.getStatus());
+        assertNull(atual.getValidadoEm());
     }
 
     private Ingresso emitirIngressoDeTeste() {
