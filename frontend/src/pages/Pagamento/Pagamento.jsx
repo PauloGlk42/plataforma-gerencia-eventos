@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { usePedido, usePagar } from '../../hooks/usePedido'
 import { formatarPreco } from '../../lib/format'
 import { Carregando, ErroCarregamento } from '../../components/QueryState/QueryState'
+import Modal from '../../components/Modal/Modal'
 import './Pagamento.css'
 
 function formatarContador(segundos) {
@@ -25,6 +26,7 @@ export default function Pagamento() {
 
   const [cartao, setCartao] = useState(CARTAO_VAZIO)
   const [erroSubmissao, setErroSubmissao] = useState(null)
+  const [recusado, setRecusado] = useState(false)
 
   // `agora` só avança dentro do próprio tick do setInterval (não sincronamente no efeito),
   // e `restam` é derivado dele a cada render — sem estado duplicado pra ressincronizar.
@@ -87,7 +89,9 @@ export default function Pagamento() {
         navigate('/meus-ingressos')
         return
       }
-      setErroSubmissao(resposta.motivo)
+      // motivo específico (saldo insuficiente, suspeita de fraude) não aparece na tela —
+      // um emissor real nunca entrega esse detalhe pra quem está tentando o pagamento
+      setRecusado(true)
       setCartao(CARTAO_VAZIO)
     } catch (err) {
       setErroSubmissao(err.mensagem ?? 'Não foi possível processar o pagamento. Tente novamente.')
@@ -117,14 +121,13 @@ export default function Pagamento() {
       </div>
 
       <div className="pagamento-form-wrap">
-        <div className="cartoes-teste">
-          <p className="cartoes-teste-titulo">Cartões de teste</p>
+        <details className="cartoes-teste">
+          <summary>ver cartões de teste</summary>
           <ul>
-            <li><code>•••• 0000</code> — recusado, saldo insuficiente</li>
-            <li><code>•••• 1111</code> — recusado, suspeita de fraude</li>
+            <li><code>•••• 0000</code> e <code>•••• 1111</code> — recusados (simulado)</li>
             <li>qualquer outro final — aprovado</li>
           </ul>
-        </div>
+        </details>
 
         <form className="pagamento-form" onSubmit={pagarAgora}>
           <div className="field">
@@ -170,6 +173,14 @@ export default function Pagamento() {
           </button>
         </form>
       </div>
+
+      {recusado && (
+        <Modal onFechar={() => setRecusado(false)} labelledBy="pagamento-recusado-titulo">
+          <h2 id="pagamento-recusado-titulo">Pagamento recusado</h2>
+          <p>Não foi possível aprovar esse cartão. Confira os dados ou tente outro cartão.</p>
+          <button className="cta" type="button" onClick={() => setRecusado(false)}>Tentar novamente</button>
+        </Modal>
+      )}
     </section>
   )
 }
