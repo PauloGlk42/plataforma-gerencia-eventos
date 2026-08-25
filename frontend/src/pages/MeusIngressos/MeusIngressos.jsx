@@ -4,6 +4,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { useMeusIngressos, useCompartilharIngresso } from '../../hooks/useIngressos'
 import { formatarDataHora } from '../../lib/format'
 import { Carregando, ErroCarregamento, Vazio } from '../../components/QueryState/QueryState'
+import Modal from '../../components/Modal/Modal'
 import './MeusIngressos.css'
 
 const STATUS_LABEL = { VALIDO: 'Válido', UTILIZADO: 'Utilizado', CANCELADO: 'Cancelado' }
@@ -34,6 +35,7 @@ function BotaoCompartilhar({ ingressoId }) {
 
 export default function MeusIngressos() {
   const { data: grupos, isLoading, isError, error, refetch } = useMeusIngressos()
+  const [ingressoAmpliado, setIngressoAmpliado] = useState(null)
 
   if (isLoading) return <Carregando texto="Carregando seus ingressos…" />
   if (isError) {
@@ -58,7 +60,6 @@ export default function MeusIngressos() {
     <section className="meus-ingressos">
       <div className="page-head">
         <h1>Meus ingressos</h1>
-        <p>Agrupados por evento, com o QR de cada ingresso.</p>
       </div>
 
       {grupos.map(grupo => (
@@ -70,9 +71,14 @@ export default function MeusIngressos() {
           <div className="ingressos-grid">
             {grupo.ingressos.map(ingresso => (
               <div key={ingresso.id} className="ingresso-card">
-                <div className="ingresso-qr">
+                <button
+                  type="button"
+                  className="ingresso-qr"
+                  onClick={() => setIngressoAmpliado(ingresso)}
+                  aria-label="Ampliar QR Code para leitura na portaria"
+                >
                   <QRCodeSVG value={ingresso.codigo} size={140} level="M" />
-                </div>
+                </button>
                 <div className="ingresso-info">
                   <span className="ingresso-setor">{ingresso.setorNome}</span>
                   <span className={`ingresso-status status-${ingresso.status.toLowerCase()}`}>
@@ -85,6 +91,15 @@ export default function MeusIngressos() {
           </div>
         </div>
       ))}
+
+      {ingressoAmpliado && (
+        <Modal onFechar={() => setIngressoAmpliado(null)} labelledBy="qr-ampliado-titulo">
+          <h2 id="qr-ampliado-titulo" className="qr-ampliado-titulo">{ingressoAmpliado.setorNome}</h2>
+          <div className="qr-ampliado">
+            <QRCodeSVG value={ingressoAmpliado.codigo} size={280} level="M" />
+          </div>
+        </Modal>
+      )}
     </section>
   )
 }

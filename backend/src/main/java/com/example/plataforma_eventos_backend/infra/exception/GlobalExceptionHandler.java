@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,18 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * Cobre tanto senha errada (BadCredentialsException) quanto login inexistente
+     * (AuthorizationService devolve usuário nulo, e o Spring Security converte isso em
+     * InternalAuthenticationServiceException) com a mesma mensagem — diferenciar os dois
+     * casos entregaria ao atacante quais e-mails estão cadastrados.
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErroResposta> handleAutenticacao(AuthenticationException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErroResposta(401, "E-mail ou senha incorretos"));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErroResposta> handleValidacao(MethodArgumentNotValidException ex) {

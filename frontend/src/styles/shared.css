@@ -18,6 +18,31 @@
 .field input:focus, .field select:focus { outline: none; }
 .field:focus-within { border-color: var(--accent); }
 
+/* autofill do navegador pinta fundo e texto com cores próprias (branco/cinza),
+   ignorando "background: transparent" e "color" do .field — o truque de
+   box-shadow interno reafirma o fundo do token, e -webkit-text-fill-color faz
+   o mesmo pro texto; sem isso o campo preenchido automaticamente destoa em
+   claro e principalmente em escuro (texto cinza sobre fundo cinza). */
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:hover,
+.field input:-webkit-autofill:focus,
+.field input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--paper) inset;
+  box-shadow: 0 0 0 1000px var(--paper) inset;
+  -webkit-text-fill-color: var(--ink);
+  caret-color: var(--ink);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ícone nativo do seletor de data/hora: o color-scheme do :root (tokens.css)
+   já faz o navegador desenhá-lo em versão clara ou escura; aqui só ajusta
+   tamanho e cursor pra ficar consistente com o resto do campo. */
+.field input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--radius);
+}
+
 .cta {
   font: inherit; font-size: 15px; font-weight: 600; width: 100%;
   background: var(--accent); color: #fff; border: 0; border-radius: var(--radius);
