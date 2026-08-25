@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCatalogo } from '../../hooks/useCatalogo'
 import { useCriarEvento } from '../../hooks/useOrganizador'
 import { useDebouncedValue } from '../../hooks/useDebouncedValue'
+import { ErroCarregamento } from '../../components/QueryState/QueryState'
 import './NovoEvento.css'
 
 // O slug do setor não é texto livre: o mapa SVG (SectorMap/sectorShapes) casa
@@ -32,7 +33,10 @@ export default function NovoEvento() {
   const [tipoBusca, setTipoBusca] = useState('SHOW')
   const [termoBusca, setTermoBusca] = useState('')
   const termoDebounced = useDebouncedValue(termoBusca, 300)
-  const { data: itensCatalogo, isLoading: carregandoCatalogo } = useCatalogo(termoDebounced, tipoBusca)
+  const {
+    data: itensCatalogo, isLoading: carregandoCatalogo,
+    isError: erroCatalogo, error: erroCatalogoDetalhe, refetch: refazerBuscaCatalogo,
+  } = useCatalogo(termoDebounced, tipoBusca)
 
   const [itemSelecionado, setItemSelecionado] = useState(null)
 
@@ -80,7 +84,7 @@ export default function NovoEvento() {
     try {
       await criar.mutateAsync({
         tipo: itemSelecionado.tipo,
-        fonte: 'LOCAL',
+        fonte: itemSelecionado.fonte,
         idExterno: itemSelecionado.idExterno,
         titulo: itemSelecionado.titulo,
         sinopse: itemSelecionado.sinopse,
@@ -126,7 +130,12 @@ export default function NovoEvento() {
                 </div>
               </div>
 
-              {carregandoCatalogo ? (
+              {erroCatalogo ? (
+                <ErroCarregamento
+                  mensagem={erroCatalogoDetalhe?.mensagem ?? 'Não foi possível buscar o catálogo.'}
+                  onTentarNovamente={refazerBuscaCatalogo}
+                />
+              ) : carregandoCatalogo ? (
                 <p className="ne-aviso">Buscando…</p>
               ) : (
                 <div className="ne-catalogo-grid">
