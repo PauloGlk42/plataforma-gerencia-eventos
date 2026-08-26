@@ -1,7 +1,6 @@
 ## Credenciais de demonstração (seed)
 
-Os quatro usuários semeados (migrations V6 + V8) usam a mesma senha, por
-serem dados de demonstração:
+Os quatro usuários semeados usam a mesma senha
 
 | Papel       | Login                    | Senha      
 | Organizador | organizador@evento.com   | senha123   
@@ -31,7 +30,7 @@ emitir ingresso duplicado.
 
 ## Ingresso e QR
 
-Cada unidade comprada vira um ingresso próprio, com `codigo` no formato
+Para permitir o compartilhamento unitário dos ingressos, quando um lote é comprado, o usuário tem acesso a unidade, com `codigo` no formato
 `<identificador>.<assinatura>` — uma assinatura HMAC-SHA256 do identificador, em
 base64url, calculada com a chave `INGRESSO_SECRET` (própria, separada do `JWT_SECRET`).
 A imagem do QR é responsabilidade do frontend; a API só devolve essa string.
@@ -73,3 +72,10 @@ forjado é rejeitado sem custo de I/O.
 ### Stack
 - React + vite
 - Spring boot + postgresql
+
+links:
+https://plataforma-gerencia-eventos.vercel.app/
+
+https://railway.com/project/ef72d828-63f4-4791-bed0-d6e928331d80/service/fc0030e1-1191-4ce4-86be-800fbbe5227d/variables?environmentId=ea5d58c7-88bb-43d7-b683-adcdb3a5fcad
+
+https://github.com/PauloGlk42/plataforma-gerencia-eventos.git
