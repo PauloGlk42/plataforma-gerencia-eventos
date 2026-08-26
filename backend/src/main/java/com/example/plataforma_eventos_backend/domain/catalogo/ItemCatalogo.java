@@ -1,5 +1,6 @@
 package com.example.plataforma_eventos_backend.domain.catalogo;
 
+import com.example.plataforma_eventos_backend.domain.evento.FonteCatalogo;
 import com.example.plataforma_eventos_backend.domain.evento.TipoEvento;
 
 public record ItemCatalogo(
@@ -7,6 +8,7 @@ public record ItemCatalogo(
         String titulo,
         String sinopse,
         String imagemUrl,
-        TipoEvento tipo
+        TipoEvento tipo,
+        FonteCatalogo fonte
 ) {
 }

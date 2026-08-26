@@ -55,4 +55,23 @@ class PortariaControllerAutorizacaoTest {
                         .content("{\"codigo\":\"qualquer\",\"eventoId\":1}"))
                 .andExpect(status().isForbidden());
     }
+
+    /**
+     * 403 (papel errado, sessão válida) e 401 (sem sessão válida) precisam continuar
+     * distintos: o front só sabe recuperar sozinho ("sessão expirada", volta pro login) do
+     * 401 — se rota protegida sem token virasse 403 igual ao de papel errado, a sessão
+     * inválida ficava indistinguível e a tela travava quebrada em vez de voltar pro login.
+     */
+    @Test
+    void semTokenRecebe401AoListarEventosDaPortaria() throws Exception {
+        mockMvc.perform(get("/api/portaria/eventos"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void tokenInvalidoRecebe401AoListarEventosDaPortaria() throws Exception {
+        mockMvc.perform(get("/api/portaria/eventos")
+                        .header("Authorization", "Bearer token.forjado.invalido"))
+                .andExpect(status().isUnauthorized());
+    }
 }

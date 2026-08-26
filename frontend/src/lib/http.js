@@ -35,10 +35,13 @@ async function request(path, { method = 'GET', body, auth = true, headers = {} }
     throw new ApiError({ status: 0, mensagem: 'Não foi possível conectar ao servidor. Verifique sua conexão.' })
   }
 
-  // só é "sessão expirada" quando a requisição levava um token e o servidor o rejeitou;
-  // um 401 sem token (ex.: login com senha errada) é credencial inválida, não sessão —
-  // a mensagem real do backend segue adiante pro fluxo normal de erro abaixo.
-  if (response.status === 401 && token) {
+  // só é "sessão expirada" quando a chamada pedia autenticação (auth !== false) e o
+  // servidor recusou com 401 — o backend responde 401 pra rota protegida sem token válido
+  // (ausente, adulterado ou expirado; ver HttpStatusEntryPoint no SecurityConfigurations) e
+  // reserva 403 pra sessão válida com papel errado, que não deve deslogar. Chamada de login
+  // sempre passa auth:false, então senha errada (401 do AuthenticationController) nunca cai
+  // aqui — a mensagem real do backend segue adiante pro fluxo normal de erro abaixo.
+  if (response.status === 401 && auth) {
     clearAuth()
     window.dispatchEvent(new Event('auth:unauthorized'))
     redirectToLogin()

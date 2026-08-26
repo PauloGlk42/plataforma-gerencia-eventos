@@ -110,7 +110,7 @@ function Scanner({ ativo, onLido }) {
       if (video && canvas && video.readyState === video.HAVE_ENOUGH_DATA) {
         canvas.width = video.videoWidth
         canvas.height = video.videoHeight
-        const contexto = canvas.getContext('2d')
+        const contexto = canvas.getContext('2d', { willReadFrequently: true })
         contexto.drawImage(video, 0, 0, canvas.width, canvas.height)
         const imagem = contexto.getImageData(0, 0, canvas.width, canvas.height)
         const lido = jsQR(imagem.data, imagem.width, imagem.height)
@@ -159,7 +159,9 @@ function Scanner({ ativo, onLido }) {
 }
 
 function ResultadoPainel({ resultado, onProximo }) {
-  const info = RESULTADO_INFO[resultado.resultado]
+  // fallback pra INVALIDO se o resultado vier num formato inesperado — melhor mostrar
+  // "código inválido" do que quebrar a tela da portaria no meio de uma fila.
+  const info = RESULTADO_INFO[resultado.resultado] ?? RESULTADO_INFO.INVALIDO
   const Icone = info.Icone
 
   return (

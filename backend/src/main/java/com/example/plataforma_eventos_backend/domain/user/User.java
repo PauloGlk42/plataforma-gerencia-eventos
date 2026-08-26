@@ -25,6 +25,15 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRoles role;
     private String password;
+    /**
+     * Só preenchido para PORTARIA: o organizador que criou este acesso. CLIENTE e
+     * ORGANIZADOR ficam com null. Guardado como id solto (sem relação JPA) porque o User
+     * autenticado é carregado fora de transação (SecurityFilter, com open-in-view=false) —
+     * uma associação lazy aqui quebraria com LazyInitializationException ao ser acessada
+     * depois, dentro do service.
+     */
+    @Column(name = "organizador_id")
+    private String organizadorId;
 
     public User(String name, String login, String encryptedPassword ) {
         this.name = name;

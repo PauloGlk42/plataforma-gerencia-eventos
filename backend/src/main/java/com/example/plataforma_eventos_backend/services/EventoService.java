@@ -89,8 +89,9 @@ public class EventoService {
         return paraResumos(eventoRepository.findByOrganizador(organizador));
     }
 
-    public List<EventoPortariaDTO> buscarPublicadosParaPortaria() {
-        return eventoRepository.findByStatusOrderByInicio(StatusEvento.PUBLICADO).stream()
+    public List<EventoPortariaDTO> buscarPublicadosParaPortaria(User portaria) {
+        return eventoRepository.findByStatusAndOrganizador_IdOrderByInicio(StatusEvento.PUBLICADO, portaria.getOrganizadorId())
+                .stream()
                 .map(EventoPortariaDTO::de)
                 .toList();
     }
