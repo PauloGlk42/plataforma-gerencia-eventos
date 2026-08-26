@@ -110,7 +110,7 @@ function Scanner({ ativo, onLido }) {
       if (video && canvas && video.readyState === video.HAVE_ENOUGH_DATA) {
         canvas.width = video.videoWidth
         canvas.height = video.videoHeight
-        const contexto = canvas.getContext('2d')
+        const contexto = canvas.getContext('2d', { willReadFrequently: true })
         contexto.drawImage(video, 0, 0, canvas.width, canvas.height)
         const imagem = contexto.getImageData(0, 0, canvas.width, canvas.height)
         const lido = jsQR(imagem.data, imagem.width, imagem.height)
