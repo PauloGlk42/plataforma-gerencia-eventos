@@ -13,7 +13,9 @@ import org.springframework.web.client.RestClient;
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Catálogo real via Ticketmaster Discovery API, ativo só quando TICKETMASTER_API_KEY está
@@ -29,7 +31,12 @@ import java.util.List;
 public class TicketmasterCatalogoProvider implements CatalogoProvider {
 
     private static final String URL_BASE = "https://app.ticketmaster.com";
-    private static final int TAMANHO_PAGINA = 10;
+    // a Discovery API modela cada sessão/data como um "event" à parte — uma residência ou
+    // turnê com muitas datas devolveria o mesmo show repetido dezenas de vezes. Busca mais
+    // eventos brutos do que o necessário pra sobrar variedade depois de deduplicar por
+    // título (ver buscar()) até chegar em TAMANHO_RESULTADO itens únicos.
+    private static final int TAMANHO_BUSCA = 50;
+    private static final int TAMANHO_RESULTADO = 10;
     // ordem de preferência de proporção de imagem — 16:9 é a mais próxima do que a tela de
     // criação de evento usa para os cards do catálogo
     private static final List<String> RATIOS_PREFERIDAS = List.of("16_9", "3_2", "4_3");
@@ -59,7 +66,7 @@ public class TicketmasterCatalogoProvider implements CatalogoProvider {
                     .uri(uriBuilder -> uriBuilder
                             .path("/discovery/v2/events.json")
                             .queryParam("keyword", termo == null ? "" : termo)
-                            .queryParam("size", TAMANHO_PAGINA)
+                            .queryParam("size", TAMANHO_BUSCA)
                             .queryParam("apikey", apiKey)
                             .build())
                     .retrieve()
@@ -75,14 +82,23 @@ public class TicketmasterCatalogoProvider implements CatalogoProvider {
         }
 
         List<ItemCatalogo> itens = new ArrayList<>();
+        Set<String> titulosVistos = new HashSet<>();
         for (JsonNode evento : eventos) {
+            String titulo = textoOuNull(evento.path("name"));
+            String chaveTitulo = titulo == null ? null : titulo.trim().toLowerCase();
+            if (!titulosVistos.add(chaveTitulo)) {
+                continue;
+            }
             itens.add(new ItemCatalogo(
                     textoOuNull(evento.path("id")),
-                    textoOuNull(evento.path("name")),
+                    titulo,
                     sinopse(evento),
                     melhorImagem(evento.path("images")),
                     TipoEvento.SHOW,
                     FonteCatalogo.TICKETMASTER));
+            if (itens.size() >= TAMANHO_RESULTADO) {
+                break;
+            }
         }
         return itens;
     }
