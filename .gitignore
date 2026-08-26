@@ -1,0 +1,14 @@
+# Segredos
+.env
+.env.*
+!.env.example
+application-local.yml
+application-local.properties
+
+# IDE e SO
+.idea/
+.vscode/
+.DS_Store
+
+# Claude Code (configuração pessoal)
+.claude/settings.local.json

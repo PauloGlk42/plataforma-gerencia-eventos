@@ -1,20 +1,13 @@
-# Plataforma de Eventos e Ingressos
-
-> README ainda em construção — a versão completa (passo a passo, decisões de
-> arquitetura, não-objetivos, uso de IA) entra depois que o backend e o
-> frontend estiverem fechados. Ver `docs/CONTEXTO-PROJETO.md` §13.
-
 ## Credenciais de demonstração (seed)
 
 Os quatro usuários semeados (migrations V6 + V8) usam a mesma senha, por
 serem dados de demonstração:
 
-| Papel       | Login                    | Senha      |
-|-------------|--------------------------|------------|
-| Organizador | organizador@evento.com   | senha123   |
-| Cliente     | cliente1@evento.com      | senha123   |
-| Cliente     | cliente2@evento.com      | senha123   |
-| Portaria    | portaria@evento.com      | senha123   |
+| Papel       | Login                    | Senha      
+| Organizador | organizador@evento.com   | senha123   
+| Cliente     | cliente1@evento.com      | senha123   
+| Cliente     | cliente2@evento.com      | senha123  
+| Portaria    | portaria@evento.com      | senha123   
 
 Login: `POST /auth/login` com `{ "login": "...", "password": "senha123" }`,
 retorna `{ "token": "..." }` (JWT, usar como `Authorization: Bearer <token>`).
@@ -25,11 +18,10 @@ retorna `{ "token": "..." }` (JWT, usar como `Authorization: Bearer <token>`).
 gateway real: o resultado é determinístico pelo final do número do cartão, para o
 avaliador conseguir exercitar os dois caminhos sem depender de nenhum serviço externo.
 
-| Final do cartão | Resultado |
-|---|---|
-| `0000` | Recusado — saldo insuficiente |
-| `1111` | Recusado — suspeita de fraude |
-| Qualquer outro número válido (13 a 19 dígitos) | Aprovado |
+| Final do cartão | Resultado                     |
+| `0000`          | Recusado — saldo insuficiente |
+| `1111`          | Recusado — suspeita de fraude |
+| Qualquer outro  | Aprovado 
 
 Toda tentativa gera uma linha em `pagamento` (aprovado ou recusado, com o motivo). Recusa
 **não cancela** o pedido: ele continua `PENDENTE` até o prazo da reserva vencer, e o
@@ -52,3 +44,32 @@ A imagem do QR é responsabilidade do frontend; a API só devolve essa string.
 
 A verificação de assinatura acontece antes de qualquer consulta ao banco — um código
 forjado é rejeitado sem custo de I/O.
+
+### Mais detalhes da aplicação
+- Controllers manipulando DTOs.
+- Services com as regras de negócio e @Transactional
+- Repository implementando consulta e escrita
+- Domain contendo entidades JPA, enums e dtos
+- Infra implementando segurança, tratamento de erro, cache, agendamento...
+
+- Criação de tabelas usando o Flyway migrations
+- Um contador único. setor.ocupados é a fonte da verdade do estoque, incrementado já na reserva. para não permitir venda de ingressos a mais.
+- Constraint no banco como rede de segurança: CHECK (ocupados >= 0 AND ocupados <= capacidade)
+- Liberação idempotente. Devolver estoque só acontece se a transição de status do pedido afetar exatamente uma linha
+- Foi implementada também, uma chave de assinatura para o QRCode. "<identificador aleatório>.<HMAC-SHA256 do identificador, em base64url>"
+- O qrcode usa svg, foi uma alternativa encontrada para garantir a nitidez independente da escala
+- Como comentado em ideias.md, busca de eventos é flexível (só filtra pelo que você preencher no front-end),ignora maiúsculas/minúsculas e de ótimo desempenho no PostgreSQL (pois usa um índice especial de trigramas para acelerar a busca por partes do texto)
+-Para o mapa de ocupação, foi feita a união dados de ocupação do banco à geometria SVG do front-end usando o slug como contrato, sem precisar guardar coordenadas no banco de dados. Essa estrutura permite carregamento leve, suporte nativo a dark mode e texturas para setores esgotados.
+-A ideia foi popular os shows e filmes com dados diretamente do banco e quando o organizador vai criar o evento, daí sim puxa alguns da api(tipo um catálogo), que se forem usados, aparecerão para o cliente na tela principal.
+- liberarReservasVencidas, task com anotação: @Scheduled(fixedDelay = 30_000), sendo a responsável por devolver reservas com status pendente já vencidas.
+
+### Uso de IA
+- Usei o claude. Primeiro escrevi o contexto do projeto e passei cada decisão que havia tomado sobre a estrutura, depois, dei acesso a pasta do projeto. Após isso, gerei um markdown de contexto que pudesse ser consultado para execução das tarefas. Pedi para manter a estrutura do projeto como repositorios, servicos, a parte de autenticação... e fui fazendo os requisitos aos poucos, em branches separadas, as quais testava e depois fazia merge. 
+
+### O que não foi implementado
+- Cancelamento com devolução ao estoque
+- Mapa de assentos
+
+### Stack
+- React + vite
+- Spring boot + postgresql

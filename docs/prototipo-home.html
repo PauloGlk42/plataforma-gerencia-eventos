@@ -1,0 +1,726 @@
+<title>Bilheteria — Protótipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --paper:      #FBFCFE;
+    --surface:    #FFFFFF;
+    --surface-2:  #F1F4F9;
+    --ink:        #242B3A;
+    --ink-2:      #59637A;
+    --ink-3:      #8B94A8;
+    --rule:       #E2E7F0;
+    --rule-2:     #CBD3E1;
+    --accent:     #3A5CE0;
+    --accent-soft:#EEF2FE;
+    --stage:      #CDD5E4;
+    /* Rampa sequencial de ocupação: um matiz só, claro -> escuro */
+    --occ-1:      #E3E9FD;
+    --occ-2:      #B7C5F6;
+    --occ-3:      #8398EC;
+    --occ-4:      #4E67D6;
+    --occ-out:    #DCE1E9;
+    --shadow:     0 1px 2px rgba(36,43,58,.04), 0 10px 26px -14px rgba(36,43,58,.16);
+    --tint-a:     .16;
+    --tint-b:     .34;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #0E1117;
+      --surface:    #171B24;
+      --surface-2:  #1F2531;
+      --ink:        #EAEEF6;
+      --ink-2:      #A8B2C6;
+      --ink-3:      #79839A;
+      --rule:       #2A3140;
+      --rule-2:     #3A4354;
+      --accent:     #8CA0FF;
+      --accent-soft:#1C2340;
+      --stage:      #333B4B;
+      --occ-1:      #2C3660;
+      --occ-2:      #45579F;
+      --occ-3:      #7186DE;
+      --occ-4:      #A6B6FF;
+      --occ-out:    #333A48;
+      --shadow:     0 1px 2px rgba(0,0,0,.4), 0 10px 26px -14px rgba(0,0,0,.6);
+      --tint-a:     .22;
+      --tint-b:     .40;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:      #0E1117;
+    --surface:    #171B24;
+    --surface-2:  #1F2531;
+    --ink:        #EAEEF6;
+    --ink-2:      #A8B2C6;
+    --ink-3:      #79839A;
+    --rule:       #2A3140;
+    --rule-2:     #3A4354;
+    --accent:     #8CA0FF;
+    --accent-soft:#1C2340;
+    --stage:      #333B4B;
+    --occ-1:      #2C3660;
+    --occ-2:      #45579F;
+    --occ-3:      #7186DE;
+    --occ-4:      #A6B6FF;
+    --occ-out:    #333A48;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 10px 26px -14px rgba(0,0,0,.6);
+    --tint-a:     .22;
+    --tint-b:     .40;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  select:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+
+  /* ---------- faixa de protótipo ---------- */
+  .proto {
+    background: var(--surface-2); color: var(--ink-2);
+    border-bottom: 1px solid var(--rule); font-size: 12.5px; padding: 8px 0;
+  }
+  .proto .wrap { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .proto b { color: var(--ink); font-weight: 600; }
+  .proto button {
+    font: inherit; font-size: 12px; margin-left: auto; cursor: pointer;
+    border: 1px solid var(--rule-2); background: var(--surface); color: var(--ink-2);
+    border-radius: 2px; padding: 4px 10px;
+  }
+
+  /* ---------- masthead ---------- */
+  header.masthead { border-bottom: 1px solid var(--rule); background: var(--surface); }
+  .masthead .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 20px; padding-top: 18px; padding-bottom: 18px; flex-wrap: wrap;
+  }
+  .logo {
+    font-family: "Bodoni Moda", Georgia, serif; font-size: 29px; font-weight: 700;
+    letter-spacing: -.015em; line-height: 1; color: var(--ink);
+    background: none; border: 0; padding: 0; cursor: pointer;
+  }
+  .logo em { font-style: italic; font-weight: 400; color: var(--accent); }
+
+  nav.top { display: flex; gap: 10px; align-items: center; }
+  .navlink {
+    font: inherit; font-size: 14px; color: var(--ink-2); text-decoration: none;
+    background: none; border: 0; cursor: pointer; padding: 8px 10px; border-radius: 2px;
+  }
+  .navlink:hover { color: var(--ink); background: var(--surface-2); }
+
+  .btn-search {
+    font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent);
+    padding: 8px 15px; border-radius: 2px;
+  }
+  .btn-search svg { width: 15px; height: 15px; }
+
+  .btn-conta {
+    font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 9px;
+    border: 1px solid var(--rule-2); background: var(--surface); color: var(--ink);
+    padding: 7px 14px 7px 8px; border-radius: 2px;
+  }
+  .btn-conta.deslogado { padding: 8px 16px; }
+  .avatar {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--accent);
+    color: #fff; font-size: 11px; font-weight: 600;
+    display: grid; place-items: center; letter-spacing: .02em;
+  }
+
+  /* ---------- painel de filtros ---------- */
+  .page-head { padding: 32px 0 0; }
+  .page-head h1 {
+    font-family: "Bodoni Moda", Georgia, serif; font-size: 32px; font-weight: 500;
+    margin: 0 0 4px; letter-spacing: -.015em;
+  }
+  .page-head p { color: var(--ink-2); margin: 0 0 20px; font-size: 14.5px; }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 2px;
+    padding: 16px; margin-bottom: 26px;
+  }
+  .panel-top {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 12px; margin-bottom: 12px;
+  }
+  .panel-top h2 {
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; margin: 0;
+  }
+  .panel-top button {
+    font: inherit; font-size: 13px; background: none; border: 0;
+    color: var(--accent); cursor: pointer; padding: 0;
+  }
+  .panel-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; }
+
+  .field {
+    display: flex; flex-direction: column; gap: 1px;
+    border: 1px solid var(--rule-2); background: var(--paper);
+    border-radius: 2px; padding: 6px 11px;
+  }
+  .field label {
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600;
+  }
+  .field input, .field select {
+    font: inherit; font-size: 14px; border: 0; background: transparent;
+    color: var(--ink); min-width: 0; padding: 0;
+  }
+  .field input:focus, .field select:focus { outline: none; }
+  .field:focus-within { border-color: var(--accent); }
+  .field.grow { flex: 1 1 240px; }
+
+  .seg { display: flex; border: 1px solid var(--rule-2); border-radius: 2px; overflow: hidden; }
+  .seg button {
+    font: inherit; font-size: 13px; border: 0; background: var(--paper);
+    color: var(--ink-2); padding: 0 15px; cursor: pointer;
+  }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+
+  /* ---------- seção ---------- */
+  .sec-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    border-bottom: 1px solid var(--rule-2); padding-bottom: 8px; margin: 0 0 22px;
+  }
+  .sec-head h2 {
+    font-family: "Bodoni Moda", Georgia, serif; font-size: 25px; font-weight: 500;
+    margin: 0; letter-spacing: -.01em;
+  }
+  .sec-head .count {
+    font-family: "IBM Plex Mono", monospace; font-size: 12.5px;
+    color: var(--ink-3); font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- grade de eventos ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(256px, 1fr)); gap: 20px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 2px;
+    display: flex; flex-direction: column; overflow: hidden;
+    transition: box-shadow .16s ease, transform .16s ease, border-color .16s ease;
+  }
+  .card:hover { box-shadow: var(--shadow); transform: translateY(-2px); border-color: var(--rule-2); }
+
+  /* Slot do poster do catálogo (evento.imagem_url).
+     No protótipo, bloco de cor clara com o título em tinta — a CSP bloqueia imagem externa. */
+  .poster {
+    aspect-ratio: 4 / 3; position: relative; display: flex; align-items: flex-end;
+    padding: 15px; border-bottom: 1px solid var(--rule);
+    background:
+      repeating-linear-gradient(135deg, rgb(var(--p) / .07) 0 1px, transparent 1px 8px),
+      linear-gradient(155deg, rgb(var(--p) / var(--tint-a)), rgb(var(--p) / var(--tint-b)));
+  }
+  .poster h3 {
+    font-family: "Bodoni Moda", Georgia, serif; font-weight: 500; font-size: 24px;
+    line-height: 1.1; margin: 0; color: var(--ink); text-wrap: balance;
+  }
+  .kind {
+    position: absolute; top: 11px; left: 11px;
+    font-family: "IBM Plex Mono", monospace; font-size: 9.5px; letter-spacing: .12em;
+    background: var(--surface); color: var(--ink-2);
+    border: 1px solid var(--rule-2); padding: 2px 7px; border-radius: 2px;
+  }
+
+  .card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 11px; flex: 1; }
+  .meta { font-size: 13.5px; color: var(--ink-2); display: flex; flex-direction: column; gap: 2px; }
+  .meta .when {
+    font-family: "IBM Plex Mono", monospace; font-size: 12.5px;
+    color: var(--ink); font-variant-numeric: tabular-nums;
+  }
+  .price {
+    margin-top: auto; display: flex; align-items: baseline; justify-content: space-between;
+    gap: 10px; border-top: 1px solid var(--rule); padding-top: 11px;
+  }
+  .price .from { font-size: 11px; color: var(--ink-3); }
+  .price strong {
+    font-family: "IBM Plex Mono", monospace; font-size: 15px; font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- medidor de ocupação ---------- */
+  .occ { display: flex; flex-direction: column; gap: 5px; }
+  .occ-track { height: 5px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .occ-fill { height: 100%; border-radius: 999px; }
+  .occ-label {
+    display: flex; justify-content: space-between; gap: 8px;
+    font-size: 11.5px; color: var(--ink-2); font-variant-numeric: tabular-nums;
+  }
+  .occ-label .pct { font-family: "IBM Plex Mono", monospace; color: var(--ink-3); }
+  .sold-out {
+    font-size: 11.5px; font-weight: 600; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+
+  /* ---------- detalhe ---------- */
+  .detail {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 2px;
+    display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  }
+  @media (max-width: 880px) { .detail { grid-template-columns: 1fr; } }
+  .detail-left { padding: 26px; border-right: 1px solid var(--rule); }
+  @media (max-width: 880px) { .detail-left { border-right: 0; border-bottom: 1px solid var(--rule); } }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .detail h1 {
+    font-family: "Bodoni Moda", Georgia, serif; font-weight: 500; font-size: 38px;
+    line-height: 1.05; margin: 6px 0 10px; letter-spacing: -.02em; text-wrap: balance;
+  }
+  .detail .sub { color: var(--ink-2); font-size: 14.5px; margin: 0 0 18px; }
+  .detail .sub b { color: var(--ink); font-weight: 500; }
+
+  .venue { width: 100%; height: auto; display: block; margin: 4px 0 14px; }
+  .venue [data-sector] { cursor: pointer; transition: opacity .14s ease; }
+  .venue [data-sector]:hover { opacity: .84; }
+  .venue [data-sector][aria-pressed="true"] { stroke: var(--accent); stroke-width: 2.5; }
+  .venue .stage-shape { fill: var(--stage); }
+  .venue text {
+    font-family: "IBM Plex Sans", sans-serif; font-size: 11px; font-weight: 600;
+    pointer-events: none; text-anchor: middle; fill: var(--ink);
+  }
+  .venue .lbl-light { fill: #FFFFFF; }
+
+  .legend {
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+    font-size: 11.5px; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 12px;
+  }
+  .legend .swatch {
+    display: inline-block; width: 11px; height: 11px; border-radius: 2px;
+    border: 1px solid var(--rule-2); vertical-align: -2px; margin-right: 5px;
+  }
+
+  /* ---------- lista de setores ---------- */
+  .detail-right { padding: 26px; display: flex; flex-direction: column; gap: 14px; }
+  .sectors { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .sector-row {
+    width: 100%; text-align: left; font: inherit; cursor: pointer;
+    border: 1px solid var(--rule); background: var(--paper); border-radius: 2px;
+    padding: 12px 14px; display: grid; gap: 8px;
+  }
+  .sector-row:hover:not([disabled]) { border-color: var(--rule-2); }
+  .sector-row[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+  .sector-row[disabled] { cursor: not-allowed; opacity: .6; }
+  .sector-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .sector-top .nm { font-weight: 600; font-size: 14.5px; }
+  .sector-top .pr {
+    font-family: "IBM Plex Mono", monospace; font-size: 14px;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+
+  .checkout {
+    border: 1px solid var(--rule); border-radius: 2px; background: var(--paper);
+    padding: 16px; display: flex; flex-direction: column; gap: 12px; margin-top: auto;
+  }
+  .qty { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .stepper { display: flex; align-items: center; border: 1px solid var(--rule-2); border-radius: 2px; }
+  .stepper button {
+    font: inherit; font-size: 17px; line-height: 1; width: 34px; height: 34px;
+    border: 0; background: var(--surface); color: var(--ink); cursor: pointer;
+  }
+  .stepper output {
+    min-width: 42px; text-align: center; font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums; font-size: 15px;
+  }
+  .total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .total .lbl { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+  .total .val {
+    font-family: "IBM Plex Mono", monospace; font-size: 21px; font-variant-numeric: tabular-nums;
+  }
+  .cta {
+    font: inherit; font-size: 15px; font-weight: 600; width: 100%;
+    background: var(--accent); color: #fff; border: 0; border-radius: 2px;
+    padding: 13px; cursor: pointer;
+  }
+  .cta:disabled { background: var(--surface-2); color: var(--ink-3); cursor: not-allowed; }
+  .hold { font-size: 12px; color: var(--ink-2); text-align: center; margin: 0; }
+  .hold code {
+    font-family: "IBM Plex Mono", monospace; background: var(--surface-2);
+    padding: 1px 5px; border-radius: 2px;
+  }
+
+  /* ---------- notas ---------- */
+  .notes { padding: 44px 0 64px; }
+  .notes h2 {
+    font-family: "Bodoni Moda", Georgia, serif; font-size: 22px; font-weight: 500; margin: 0 0 4px;
+  }
+  .notes .lede { color: var(--ink-2); margin: 0 0 20px; max-width: 62ch; }
+  .notes dl {
+    margin: 0; display: grid; grid-template-columns: minmax(150px, 210px) 1fr;
+    border-top: 1px solid var(--rule-2);
+  }
+  @media (max-width: 640px) { .notes dl { grid-template-columns: 1fr; } }
+  .notes dt {
+    font-weight: 600; font-size: 13.5px; padding: 13px 16px 13px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .notes dd {
+    margin: 0; padding: 13px 0; color: var(--ink-2); font-size: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .notes code {
+    font-family: "IBM Plex Mono", monospace; font-size: 12.5px;
+    background: var(--surface-2); padding: 1px 5px; border-radius: 2px; color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="proto">
+  <div class="wrap">
+    <b>Protótipo</b>
+    <span>v2 · base clara, botão de busca no topo, painel de filtros separado</span>
+    <button id="toggle-login">Ver como logado</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <button class="logo" title="Voltar para os eventos">Bilheteria<em>.</em></button>
+    <nav class="top">
+      <button class="btn-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path>
+        </svg>
+        Buscar eventos
+      </button>
+      <a class="navlink" href="#detalhe">Meus ingressos</a>
+      <button class="btn-conta deslogado" id="conta">Entrar</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="page-head">
+    <h1>Em cartaz</h1>
+    <p>Shows e sessões com ingressos à venda.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-top">
+      <h2>Filtrar</h2>
+      <button>Limpar filtros</button>
+    </div>
+    <div class="panel-row">
+      <div class="field grow">
+        <label for="q">Busca</label>
+        <input id="q" type="search" placeholder="artista, filme, local…" style="width:100%">
+      </div>
+      <div class="field">
+        <label for="cidade">Cidade</label>
+        <select id="cidade"><option>Curitiba</option><option>São Paulo</option><option>Todas</option></select>
+      </div>
+      <div class="field">
+        <label for="de">De</label>
+        <input id="de" type="date" value="2026-08-22">
+      </div>
+      <div class="field">
+        <label for="ate">Até</label>
+        <input id="ate" type="date" value="2026-09-30">
+      </div>
+      <div class="seg" role="group" aria-label="Tipo de evento">
+        <button aria-pressed="true">Tudo</button>
+        <button aria-pressed="false">Shows</button>
+        <button aria-pressed="false">Filmes</button>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <h2>6 eventos</h2>
+      <span class="count">4 com ingressos disponíveis</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="detalhe" style="padding-top:44px">
+    <div class="sec-head">
+      <h2>Escolha do setor</h2>
+      <span class="count">clique no mapa ou na lista</span>
+    </div>
+
+    <div class="detail">
+      <div class="detail-left">
+        <div class="eyebrow">Show · 12 set 2026 · 21h00</div>
+        <h1>Metallica — M72 World Tour</h1>
+        <p class="sub">Estádio Couto Pereira, Curitiba · <b>5 160</b> lugares · <b>1 018</b> disponíveis</p>
+
+        <svg class="venue" viewBox="0 0 400 320" role="img" aria-label="Mapa de setores do Estádio Couto Pereira">
+          <defs>
+            <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+              <rect width="7" height="7" fill="var(--occ-out)"></rect>
+              <line x1="0" y1="0" x2="0" y2="7" stroke="var(--surface)" stroke-width="3"></line>
+            </pattern>
+          </defs>
+
+          <rect class="stage-shape" x="120" y="16" width="160" height="30" rx="3"></rect>
+          <text x="200" y="35">PALCO</text>
+
+          <rect data-sector="PISTA" x="120" y="62" width="160" height="120" rx="4"></rect>
+          <text x="200" y="118" data-lbl="PISTA">Pista</text>
+          <text x="200" y="134" data-lbl="PISTA" style="font-weight:400;font-size:10px">820 livres</text>
+
+          <rect data-sector="CAMAROTE_A" x="26" y="62" width="72" height="120" rx="4"></rect>
+          <text x="62" y="115" data-lbl="CAMAROTE_A">Camarote</text>
+          <text x="62" y="130" data-lbl="CAMAROTE_A" style="font-weight:400;font-size:10px">A · esgotado</text>
+
+          <rect data-sector="CAMAROTE_B" x="302" y="62" width="72" height="120" rx="4"></rect>
+          <text x="338" y="115" data-lbl="CAMAROTE_B">Camarote</text>
+          <text x="338" y="130" data-lbl="CAMAROTE_B" style="font-weight:400;font-size:10px">B · 68 livres</text>
+
+          <path data-sector="ARQUIBANCADA" d="M 26 202 Q 200 244 374 202 L 374 276 Q 200 318 26 276 Z"></path>
+          <text x="200" y="264" data-lbl="ARQUIBANCADA">Arquibancada</text>
+          <text x="200" y="279" data-lbl="ARQUIBANCADA" style="font-weight:400;font-size:10px">130 livres</text>
+        </svg>
+
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--occ-1)"></i>até 50% vendido</span>
+          <span><i class="swatch" style="background:var(--occ-2)"></i>50–80%</span>
+          <span><i class="swatch" style="background:var(--occ-3)"></i>80–95%</span>
+          <span><i class="swatch" style="background:var(--occ-4)"></i>quase lá</span>
+          <span><i class="swatch" style="background:var(--occ-out)"></i>esgotado</span>
+        </div>
+      </div>
+
+      <div class="detail-right">
+        <ul class="sectors" id="sectors"></ul>
+
+        <div class="checkout">
+          <div class="qty">
+            <span id="qty-label" style="font-size:14px;color:var(--ink-2)">Selecione um setor</span>
+            <div class="stepper" role="group" aria-labelledby="qty-label">
+              <button id="minus" aria-label="Diminuir quantidade">−</button>
+              <output id="qtd">0</output>
+              <button id="plus" aria-label="Aumentar quantidade">+</button>
+            </div>
+          </div>
+          <div class="total">
+            <span class="lbl">Total</span>
+            <span class="val" id="total">R$ 0,00</span>
+          </div>
+          <button class="cta" id="cta" disabled>Reservar</button>
+          <p class="hold">A reserva fica sua por <code>10 min</code> até a confirmação do pagamento.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <h2>O que está decidido aqui</h2>
+    <p class="lede">Cada linha é uma escolha que dá para defender no README — e cada uma pode ser trocada.</p>
+    <dl>
+      <dt>Base clara</dt>
+      <dd>Branco levemente frio, tinta em azul-ardósia em vez de preto puro, e o poster virou bloco de cor clara com o título em tinta — como papel colorido impresso. Nenhuma área grande escura na tela.</dd>
+
+      <dt>Busca é botão, não link</dt>
+      <dd>O que o visitante mais quer fazer ganha peso de botão no topo. Clicar no logotipo leva ao mesmo lugar — as duas rotas caem na listagem de eventos.</dd>
+
+      <dt>Entrar vira Perfil</dt>
+      <dd>Deslogado, um botão "Entrar". Logado, avatar com a inicial e o nome. O mesmo canto da tela responde "quem sou eu aqui". Use o botão na faixa cinza acima para alternar.</dd>
+
+      <dt>Filtros em painel próprio</dt>
+      <dd>Bloco separado da barra de navegação, dentro da tela de eventos, com rótulos em caixa alta e cantos retos. Navegar e filtrar são coisas diferentes e ficam em lugares diferentes.</dd>
+
+      <dt>Bodoni nos títulos</dt>
+      <dd>Serifa de alto contraste remete a cartaz de espetáculo. Só em nome de evento e cabeçalho; o resto é IBM Plex Sans.</dd>
+
+      <dt>Mono para número</dt>
+      <dd>Preço, data, quantidade e código de ingresso em IBM Plex Mono com <code>tabular-nums</code>, então dígito alinha com dígito em coluna.</dd>
+
+      <dt>Ocupação em um matiz</dt>
+      <dd>Escala sequencial do mesmo azul, claro a escuro — não semáforo. Esgotado sai da escala e vira hachura, distinguível sem depender de cor.</dd>
+
+      <dt>Cor nunca sozinha</dt>
+      <dd>Todo setor mostra <code>N livres</code> ao lado da cor, no mapa e na lista. Quem não distingue matiz lê o número.</dd>
+
+      <dt>Mapa dirigido por slug</dt>
+      <dd>Cada forma casa com <code>setor.slug</code> do banco. Setor com slug desconhecido some do SVG e continua na lista ao lado — a tela nunca trava.</dd>
+
+      <dt>Reserva com prazo</dt>
+      <dd>O prazo de 10 minutos aparece antes do clique, não depois. É a regra do <code>expira_em</code> visível para quem compra.</dd>
+    </dl>
+  </section>
+</div>
+
+<script>
+  const brl = n => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  /* --- estado de sessão: Entrar <-> Perfil --- */
+  let logado = false;
+  const conta = document.getElementById("conta");
+  const alternar = document.getElementById("toggle-login");
+  function pintarConta() {
+    if (logado) {
+      conta.classList.remove("deslogado");
+      conta.innerHTML = `<span class="avatar" aria-hidden="true">PK</span>Perfil`;
+      alternar.textContent = "Ver como visitante";
+    } else {
+      conta.classList.add("deslogado");
+      conta.textContent = "Entrar";
+      alternar.textContent = "Ver como logado";
+    }
+  }
+  alternar.addEventListener("click", () => { logado = !logado; pintarConta(); });
+  pintarConta();
+
+  /* --- eventos --- */
+  const eventos = [
+    { titulo: "Metallica — M72 World Tour", tipo: "SHOW",  local: "Estádio Couto Pereira",   cidade: "Curitiba",        quando: "12 set · 21h00", de: 180, cap: 5160, ocu: 4142, p: "62 90 190" },
+    { titulo: "Ainda Estou Aqui",           tipo: "FILME", local: "Cinemark Iguatemi",       cidade: "Curitiba",        quando: "24 ago · 19h30", de: 22,  cap: 180,  ocu: 96,   p: "108 82 176" },
+    { titulo: "Caetano e Bethânia",         tipo: "SHOW",  local: "Teatro Guaíra",           cidade: "Curitiba",        quando: "28 ago · 20h30", de: 120, cap: 1400, ocu: 1400, p: "190 78 110" },
+    { titulo: "Racionais MC's",             tipo: "SHOW",  local: "Pedreira Paulo Leminski", cidade: "Curitiba",        quando: "05 set · 19h00", de: 90,  cap: 3000, ocu: 1180, p: "56 130 96" },
+    { titulo: "Duna: Parte Três",           tipo: "FILME", local: "Cinépolis Palladium",     cidade: "Curitiba",        quando: "25 ago · 21h15", de: 20,  cap: 240,  ocu: 231,  p: "190 128 52" },
+    { titulo: "Festival Psicodália",        tipo: "SHOW",  local: "Rio Negrinho",            cidade: "Santa Catarina",  quando: "30 ago · 14h00", de: 240, cap: 2200, ocu: 2200, p: "48 140 152" }
+  ];
+
+  // Rampa sequencial: um matiz, claro -> escuro conforme enche.
+  const passo = r => r >= 1 ? "out" : r >= 0.95 ? 4 : r >= 0.80 ? 3 : r >= 0.50 ? 2 : 1;
+  const corMapa  = r => passo(r) === "out" ? "url(#hatch)"   : `var(--occ-${passo(r)})`;
+  const corBarra = r => passo(r) === "out" ? "var(--occ-out)" : `var(--occ-${passo(r)})`;
+
+  document.getElementById("grid").innerHTML = eventos.map(e => {
+    const r = e.ocu / e.cap, livres = e.cap - e.ocu, esgotado = livres === 0;
+    return `
+      <article class="card">
+        <div class="poster" style="--p:${e.p}">
+          <span class="kind">${e.tipo}</span>
+          <h3>${e.titulo}</h3>
+        </div>
+        <div class="card-body">
+          <div class="meta">
+            <span class="when">${e.quando}</span>
+            <span>${e.local} · ${e.cidade}</span>
+          </div>
+          <div class="occ">
+            <div class="occ-track">
+              <div class="occ-fill" style="width:${Math.round(r * 100)}%;background:${corBarra(r)}"></div>
+            </div>
+            <div class="occ-label">
+              ${esgotado
+                ? `<span class="sold-out">Esgotado</span><span class="pct">100%</span>`
+                : `<span>${livres.toLocaleString("pt-BR")} lugares livres</span><span class="pct">${Math.round(r * 100)}%</span>`}
+            </div>
+          </div>
+          <div class="price">
+            <span class="from">a partir de</span>
+            <strong>${brl(e.de)}</strong>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+
+  /* --- setores do evento em detalhe --- */
+  const setores = [
+    { slug: "PISTA",        nome: "Pista",        preco: 320, cap: 2000, ocu: 1180 },
+    { slug: "ARQUIBANCADA", nome: "Arquibancada", preco: 180, cap: 3000, ocu: 2870 },
+    { slug: "CAMAROTE_A",   nome: "Camarote A",   preco: 520, cap: 80,   ocu: 80   },
+    { slug: "CAMAROTE_B",   nome: "Camarote B",   preco: 520, cap: 80,   ocu: 12   }
+  ];
+
+  let sel = null, qtd = 0;
+
+  setores.forEach(s => {
+    const r = s.ocu / s.cap;
+    const forma = document.querySelector(`.venue [data-sector="${s.slug}"]`);
+    if (!forma) return;                       // slug sem geometria: só a lista mostra
+    forma.setAttribute("fill", corMapa(r));
+    forma.setAttribute("stroke", "var(--rule-2)");
+    forma.setAttribute("stroke-width", "1");
+    forma.setAttribute("role", "button");
+    forma.setAttribute("tabindex", "0");
+    forma.setAttribute("aria-pressed", "false");
+    forma.setAttribute("aria-label", `${s.nome}, ${s.cap - s.ocu} lugares livres`);
+    // rótulo branco só sobre o passo mais escuro da rampa
+    if (passo(r) === 4) {
+      document.querySelectorAll(`.venue [data-lbl="${s.slug}"]`)
+        .forEach(t => t.classList.add("lbl-light"));
+    }
+    const escolher = ev => { ev.preventDefault(); selecionar(s.slug); };
+    forma.addEventListener("click", escolher);
+    forma.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") escolher(ev); });
+  });
+
+  document.getElementById("sectors").innerHTML = setores.map(s => {
+    const livres = s.cap - s.ocu, r = s.ocu / s.cap, esgotado = livres === 0;
+    return `
+      <li>
+        <button class="sector-row" data-row="${s.slug}" aria-pressed="false" ${esgotado ? "disabled" : ""}>
+          <span class="sector-top">
+            <span class="nm">${s.nome}</span>
+            <span class="pr">${brl(s.preco)}</span>
+          </span>
+          <span class="occ">
+            <span class="occ-track">
+              <span class="occ-fill" style="display:block;width:${Math.round(r * 100)}%;background:${corBarra(r)}"></span>
+            </span>
+            <span class="occ-label">
+              ${esgotado
+                ? `<span class="sold-out">Esgotado</span>`
+                : `<span>${livres.toLocaleString("pt-BR")} de ${s.cap.toLocaleString("pt-BR")} livres</span>`}
+              <span class="pct">${Math.round(r * 100)}%</span>
+            </span>
+          </span>
+        </button>
+      </li>`;
+  }).join("");
+
+  document.querySelectorAll("[data-row]").forEach(b =>
+    b.addEventListener("click", () => selecionar(b.dataset.row))
+  );
+
+  function selecionar(slug) {
+    const s = setores.find(x => x.slug === slug);
+    if (!s || s.cap - s.ocu === 0) return;
+    sel = s; qtd = Math.max(qtd, 1);
+    document.querySelectorAll("[data-row]").forEach(b =>
+      b.setAttribute("aria-pressed", String(b.dataset.row === slug)));
+    document.querySelectorAll(".venue [data-sector]").forEach(f =>
+      f.setAttribute("aria-pressed", String(f.dataset.sector === slug)));
+    render();
+  }
+
+  function render() {
+    const lbl = document.getElementById("qty-label");
+    const cta = document.getElementById("cta");
+    if (!sel) { lbl.textContent = "Selecione um setor"; cta.disabled = true; return; }
+    lbl.textContent = `${sel.nome} · ${brl(sel.preco)} cada`;
+    document.getElementById("qtd").textContent = qtd;
+    document.getElementById("total").textContent = brl(qtd * sel.preco);
+    cta.disabled = qtd === 0;
+    cta.textContent = qtd === 0 ? "Reservar" : `Reservar ${qtd} ${qtd === 1 ? "ingresso" : "ingressos"}`;
+  }
+
+  document.getElementById("plus").addEventListener("click", () => {
+    if (!sel) return;
+    qtd = Math.min(qtd + 1, Math.min(6, sel.cap - sel.ocu));
+    render();
+  });
+  document.getElementById("minus").addEventListener("click", () => {
+    if (!sel) return;
+    qtd = Math.max(0, qtd - 1);
+    render();
+  });
+
+  render();
+</script>

@@ -96,24 +96,23 @@ Acabei fazendo na mão as inicializações e configurações iniciais do backend
 - Swagger
 
 ### Resumo do dia 21/08:
-- Não tive tanto tempo quanto gostaria e vou ter que trabalhar no sábado. Então foi feito um repasse em algumas tecnicas para tentar afinar a arquitetura do software, inicio de configurações para auxilio da IA,
-criaçãop das principais Entidades JPA, enums e suas repotorios, seed de alguns dados usando usandos as novas migrations
+- Não tive tanto tempo quanto gostaria e vou ter que trabalhar no sábado. Então foi feito um repasse em algumas tecnicas para tentar afinar a arquitetura do software, inicio de configurações para auxilio da IA, criação das principais Entidades JPA, enums e suas repotorios, seed de alguns dados usando usandos as novas migrations
 - Definir um estilo para as telas bem como suas funções.
-
 
 ### Objetivo do dia 22/08:
 - Frontend para o que foi implementado anteriormente
 
 ### Objetivo do dia 22/08:
-- Finalizar backend
+- Finalizar backend 
 
 ### Objetivo do dia 23/08:
-- Finalizar frontend
+- Finalizar frontend  
 
 ### Objetivo do dia 24/08:
 - Deploy e testes.
 
-### Questões futuras:
-- Uso do Docker
-- Refresh token?
-- Cors
+### Resumo dos dias: 22, 23 e 24:
+- Como estou acompanhando presencialmente uma troca de sistema numa empresa de outra cidade, o tempo que tive para trabalhar no projeto foi bem variável, então fui desenvolvendo o back e front paralelamente, tendo o deploy configurado desde sábado. Achei mais seguro e eficiente assim.
+
+### Resumo do último dia
+- Aproveitei o último dia para implementar mais algumas coisas. No fim, a melhor escolha pelo que vejo seria ter começado a desenvolver o projeto desde o primeiro dia do recebimento, não pude dedicar tanto tempo quanto gostaria mas dei meu máximo.

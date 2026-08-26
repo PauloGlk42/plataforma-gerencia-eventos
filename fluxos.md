@@ -1,7 +1,0 @@
-### Fluxo de criação do evento
-- O organizador "recebe um acesso" para poder logar na plataforma, seu usuario estará salvo como tipo ORGANIZADOR, dando a ele a tela principal, que busca do banco os seus eventos, cada evento é um card que pode ser inspecionado, como se abrisse um modal de detalhes. Acho que faz sentido estabelecer um maximo de uma semana antes do evento para editar informações como inicio e termino, que nao são tao criticas. Caso passe disso, a unica opção disponivel para o evento seria cancelá-lo, devolvendo o dinheiro dos clientes. Após definir os dados básicos e salvar, esse evento é finalmente cadastrado.
-
-### Fluxo de acesso ao evento - cliente
-- Após realizar o registro, o cliente faz o login, validado ele cai na tela principal da plataforma, que traz os eventos ativos com ingressos disponiveis, o usuario pode também filtar por palavra chave, datas, preço do ingresso, local, apos clicar no card, são exibidos mais detalhes sobre o evento, como o fluxo de ocupação ou assentos disponiveis. O usuario pode entao selecionar quais assentos ele deseja se for um filme ou então, qual local do show ele deseja ficar. Ao pagar esse(s) ingresso(s), que fica(m) reservado(s) por um tempo até que o pagamento seja validado. O assento/local fica como ocupado ou decrementa da quantidade maxima por local,  respectivamente. Agora o ingresso, que foi gerado apos a confirmacao da transacao, esta linkado ao usuario, aparecendo na aba meus ingressos.
-
-
