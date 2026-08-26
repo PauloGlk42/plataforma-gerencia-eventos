@@ -2,17 +2,17 @@ package com.example.plataforma_eventos_backend.domain.catalogo;
 
 import com.example.plataforma_eventos_backend.domain.evento.FonteCatalogo;
 import com.example.plataforma_eventos_backend.domain.evento.TipoEvento;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
- * Catálogo fixo usado quando não há chave da Ticketmaster configurada, para que o fluxo
- * de criação de evento funcione sem depender de rede ou de cadastro em API externa.
+ * Catálogo fixo usado como fallback para show (sem TICKETMASTER_API_KEY) e/ou filme (sem
+ * TMDB_API_KEY) — cada um cai pro local de forma independente, ver CatalogoService. Sempre
+ * registrado (sem @Conditional): quem decide se ele entra em jogo, por tipo, é
+ * CatalogoService, não o próprio bean.
  */
 @Component
-@Conditional(CondicaoChaveTicketmasterAusente.class)
 public class CatalogoProviderLocal implements CatalogoProvider {
 
     private static final List<ItemCatalogo> ITENS = List.of(
